@@ -13,7 +13,7 @@ class AppHomePage extends ConsumerWidget {
 
   @override
   Widget build(context, ref) {
-    final authState = ref.watch(authenticationProvider);
+    // final authState = ref.watch(authenticationProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,7 +21,7 @@ class AppHomePage extends ConsumerWidget {
         centerTitle: true,
       ),
       backgroundColor: Colors.white54,
-      body: getUserHome(authState.selectedRole!),
+      // body: getUserHome(authState.selectedRole!),
     );
   }
 

@@ -3,7 +3,7 @@
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/states/authentication_state.dart';
+import 'package:digitendance/states/auth_state.dart';
 import 'package:equatable/equatable.dart';
 
 class AppUser extends Equatable {

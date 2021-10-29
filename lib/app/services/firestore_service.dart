@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/states/authentication_state.dart';
+import 'package:digitendance/states/auth_state.dart';
 
 class FirestoreService {
   final FirebaseFirestore instance = FirebaseFirestore.instance;
@@ -34,4 +34,8 @@ class FirestoreService {
       throw Exception('AppUserDoc not found in Firestore');
     }
   }
+
+
+
+
 }

@@ -7,19 +7,13 @@ class UserAvatar extends ConsumerWidget {
 
   @override
   Widget build(context, ref) {
-    final authState = ref.watch(authenticationProvider);
+    // final authState = ref.watch(authenticationProvider);
 
     return Container(
       width: 50,
       child: Column(
         children: [
-          // CircleAvatar(
-          //   child: authState.photoURL == null
-          //       ? Icon(Icons.account_circle)
-          //       : Image.network(authState.photoURL),
-          //   maxRadius: 20,
-          // ),
-          Text(authState.authenticatedUser!.userId.toString()),
+          const Text('abc'),
         ],
       ),
     );

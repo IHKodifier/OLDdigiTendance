@@ -1,6 +1,6 @@
-import 'package:digitendance/app/notifiers/authentication_notifier.dart';
+import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/providers.dart';
-import 'package:digitendance/app/services/authentication_service.dart';
+import 'package:digitendance/app/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +14,7 @@ class LoginView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authenticationProvider);
+    final authState = ref.watch(authStateProvider);
 
     return Container(
       color: Colors.black.withOpacity(0.65),
@@ -39,12 +39,13 @@ class LoginView extends ConsumerWidget {
                 ),
                 Consumer(
                   builder: (context, ref, child) => Container(
-                    height: 30,
-                    // color: Colors.pink.shade800,
-                    child: ref.watch(authenticationProvider).isBusy
-                        ? buildBusy()
-                        : Container(),
-                  ),
+                      height: 30,
+                      // color: Colors.pink.shade800,
+                      child:
+                          // ref.watch(authenticationProvider).isBusy
+                          // buildBusy()
+                      Container(),
+                      ),
                 ),
                 buildEmailFormField(emailController),
                 SizedBox(
@@ -54,7 +55,7 @@ class LoginView extends ConsumerWidget {
                 SizedBox(
                   height: 20,
                 ),
-                buildLoginButton(ref.read(authenticationProvider.notifier)),
+                buildLoginButton(),
                 buildForgotPassword(),
               ],
             ),
@@ -78,8 +79,7 @@ class LoginView extends ConsumerWidget {
         ));
   }
 
-  Container buildLoginButton(AuthenticationNotifier authNotifier) {
-    // authNotifier.state.
+  Container buildLoginButton() {
     return Container(
       // width: 300,
       height: 50,
@@ -88,12 +88,6 @@ class LoginView extends ConsumerWidget {
         child: ElevatedButton.icon(
             icon: FaIcon(FontAwesomeIcons.key),
             onPressed: () {
-              // isBusy = true;
-              authNotifier.login(
-                  loginProvider: LoginProvider.EmailPassword,
-                  email: emailController.text,
-                  password: passwordController.text);
-              // isBusy = false;
             },
             label: const Text(
               'Login',
@@ -112,15 +106,11 @@ class LoginView extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: TextFormField(
         controller: passwordController,
-        // keyboardType: TextInputType.emailAddress,
-        // onSaved: (newValue) => email = newValue,
         onChanged: (value) {},
         validator: (value) {},
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             labelText: "Password",
             hintText: 'password',
-            // If  you are using latest version of flutter then lable text and hint text shown like this
-            // if you r using flutter less then 1.20.* then maybe this is not working properly
             floatingLabelBehavior: FloatingLabelBehavior.always,
             suffixIcon: FaIcon(FontAwesomeIcons.key)),
       ),
@@ -136,11 +126,9 @@ class LoginView extends ConsumerWidget {
         // onSaved: (newValue) => email = newValue,
         onChanged: (value) {},
         validator: (value) {},
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             labelText: "Email",
             hintText: "Enter your email",
-            // If  you are using latest version of flutter then lable text and hint text shown like this
-            // if you r using flutter less then 1.20.* then maybe this is not working properly
             floatingLabelBehavior: FloatingLabelBehavior.always,
             suffixIcon: Icon(Icons.email)),
       ),
