@@ -15,9 +15,17 @@ class StartupView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final _stream = ref.watch(authStateChangesStreamProvider);
     return _stream.when(
-      data: (data) => LoginView(),
+      data: (data) => _handleWhenData(data),
       error: (e, st, data) => Text('error: $e'),
-      loading: (data) => const CircularProgressIndicator(),
+      loading: (data) => const Center(child: CircularProgressIndicator()),
     );
+  }
+
+  _handleWhenData(data) {
+    if (data != null) {
+      return const AppHomePage();
+    } else {
+      return LoginView();
+    }
   }
 }

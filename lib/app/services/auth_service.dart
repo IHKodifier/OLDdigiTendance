@@ -19,30 +19,32 @@ class AuthService {
 
   Stream<User?> get authStateChanges => instance.authStateChanges();
 
-  Future<AppUser?> login({
+  Future<User?> login({
     required LoginProvider loginProvider,
     required String email,
     required String password,
   }) async {
-    instance.setPersistence(Persistence.LOCAL);
+    // instance.setPersistence(Persistence.LOCAL);
     _email = email;
     _password = password;
+    dynamic returnvalue;
     switch (loginProvider) {
       case LoginProvider.EmailPassword:
-        signInwithEmail();
+        returnvalue = signInwithEmail();
         break;
       case LoginProvider.Facebook:
-        signInwithFacebook();
+        returnvalue = signInwithFacebook();
         break;
       case LoginProvider.Google:
-        signInwithGoogle();
+        returnvalue = signInwithGoogle();
         break;
       case LoginProvider.Phone:
-        signInwithPhone();
+        returnvalue = signInwithPhone();
         break;
 
       default:
     }
+    return returnvalue;
   }
 
   bool checkExistingUser() {
@@ -53,8 +55,8 @@ class AuthService {
     try {
       userCredential = await instance.signInWithEmailAndPassword(
           email: _email, password: _password);
-    } on FirebaseAuthException catch (e) {
-      Utilities.log(e.message);
+    } catch (e) {
+      Utilities.log(e.toString());
     }
     if (userCredential.user != null) {
       return userCredential.user;

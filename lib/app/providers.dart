@@ -32,6 +32,10 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref.read(firebaseAuthInstanceProvider));
 });
 
+
+///[firestoreServiceProvider] shall provide the [FirestoreService] App Wide
+final firestoreServiceProvider= Provider<FirestoreService>((ref) => FirestoreService());
+
 ///[authStateChangesStreamProvider] listens to [AuthStatechanges] and yields a
 ///firebase [User] or [null] when the auth state changes
 final authStateChangesStreamProvider = StreamProvider<User?>((ref) async* {
@@ -43,5 +47,5 @@ final authStateChangesStreamProvider = StreamProvider<User?>((ref) async* {
 ///[authStateProvider] shall provide []AuthNotifier]
 /// and [AuthState] app wide
 final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier(AuthState);
+  return AuthNotifier(AuthState,ref);
 });

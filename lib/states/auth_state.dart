@@ -9,13 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AuthState extends Equatable {
   bool isBusy = false;
   AppUser? authenticatedUser;
+  bool? hasAuthenticatedUser;
   String photoURL =
       'https://cdn1.iconfinder.com/data/icons/avatar-97/32/avatar-02-512.png';
   final someProvider = Provider<String>((ref) {
     return 'some value';
   });
-  
-  String asyncStatus = '';
+
   UserRole? selectedRole;
 
   handleUserRoles(Map<String, dynamic> data) async {
@@ -45,7 +45,6 @@ class AuthState extends Equatable {
         // photoURL,
         selectedRole ?? null,
         // hasAuthenticatedUser,
-        asyncStatus,
       ];
 
   AuthState initializeFrom(AuthState source) {
@@ -72,7 +71,6 @@ class AuthState extends Equatable {
     selectedRole=${selectedRole!.roleName}
     isBusy=${isBusy.toString()}
     photoUrl=${photoURL}
-    syncstatus = $asyncStatus
     ''';
   }
 

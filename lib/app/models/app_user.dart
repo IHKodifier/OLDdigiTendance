@@ -5,6 +5,7 @@ import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AppUser extends Equatable {
   // AppUser(this.userId);
@@ -18,10 +19,18 @@ class AppUser extends Equatable {
     // userId = data['userId'];
     // _handleUserRoles(data);
     this.userId = data['userId'];
-    
+
     _handleUserRoles(data);
     // additionalAppUserInfo!.photoUrl = data['photoURL'];
     Utilities.log('printing AppUser.fromJson\n${this.toString()}');
+  }
+
+  AppUser.fromFirebaseUser(User user) {
+    this.userId = user.email;
+    this.additionalAppUserInfo!.disPlayName = user.displayName;
+    this.additionalAppUserInfo!.email = user.email;
+    this.additionalAppUserInfo!.photoUrl = user.photoURL;
+    Utilities.log('printing AppUser.fromFirebaseUser\n${this.toString()}');
   }
 
   _handleUserRoles(Map<String, dynamic>? data) {
