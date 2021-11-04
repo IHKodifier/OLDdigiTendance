@@ -24,7 +24,6 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    // instance.setPersistence(Persistence.LOCAL);
     _email = email;
     _password = password;
     dynamic returnvalue;
@@ -77,7 +76,7 @@ class AuthService {
     throw UnimplementedError();
   }
 
-  Future<void> signIn() async {
+  Future<void> signOut() async {
     await instance.signOut();
   }
 }

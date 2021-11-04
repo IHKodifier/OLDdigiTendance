@@ -27,27 +27,32 @@ class AuthNotifier extends StateNotifier<AuthState> {
       email: email,
       password: password,
     );
-    if (user != null) {
-//TODO transform to AppUser and set then set state
-      final firestoreService = thisref.watch(firestoreServiceProvider);
-      var data = await firestoreService.getAppUserDoc(userId: user!.email);
-      AppUser appUser = AppUser.fromJson(data, user!.email);
-      // appUser = AppUser.fromFirebaseUser(user!);
-      // final authstate = thisref.watch(authStateProvider);
-      // var newState = AuthState().initializeFrom(state);
-      // newstate.
+    if (user != null) setUserInAuthState(user);
+  }
 
-      state.authenticatedUser = appUser;
-      state.hasAuthenticatedUser = true;
-      state.isBusy = false;
-      state.selectedRole = state.authenticatedUser!.roles[0];
-      Utilities.log(''''
+  setUserInAuthState(User? user) async {
+    //TODO transform to AppUser and set then set state
+    final firestoreService = thisref.watch(firestoreServiceProvider);
+    var data = await firestoreService.getAppUserDoc(userId: user!.email);
+    AppUser appUser = AppUser.fromJson(data, user!.email);
+    // appUser = AppUser.fromFirebaseUser(user!);
+    // final authstate = thisref.watch(authStateProvider);
+    // var newState = AuthState().initializeFrom(state);
+    // newstate.
+
+    state.authenticatedUser = appUser;
+    state.hasAuthenticatedUser = true;
+    state.isBusy = false;
+    state.selectedRole = state.authenticatedUser!.roles[0];
+    Utilities.log(''''
       AuthState equals 
       ${state.toString()}
       ''');
-      // state = newState;
-    } else {
-      Utilities.log('user not found');
-    }
+    // state = newState;
+  }
+
+  Future<void> signOut() async {
+    authService = thisref.watch(authServiceProvider);
+    authService!.signOut();
   }
 }

@@ -14,8 +14,7 @@ class AppHomePage extends ConsumerWidget {
 
   @override
   Widget build(context, ref) {
-
-    final authstate = ref.watch(authStateProvider);
+    final AuthState authstate = ref.watch(authStateProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,10 +27,11 @@ class AppHomePage extends ConsumerWidget {
   }
 
   getUserHome(AuthState authstate) {
+    int x = 2;
     if (authstate.selectedRole == UserRole.admin) {
       return const AdminAppHome();
     }
-    if (authstate.selectedRole  == UserRole.teacher) {
+    if (authstate.selectedRole == UserRole.teacher) {
       return const TeacherAppHome();
     } else {
       return const StudentAppHome();

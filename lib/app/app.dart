@@ -27,7 +27,7 @@ class App extends StatelessWidget {
           primarySwatch: Colors.purple,
         ),
         // home: const AppHomePage(title: 'DigiTendance'),
-        home: const StartupView(),
+        home:  StartupView(),
       ),
     );
   }
