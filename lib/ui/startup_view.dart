@@ -18,9 +18,13 @@ class StartupView extends ConsumerWidget {
     final _stream = ref.watch(authStateChangesStreamProvider);
     // final hasExistingUser = ref.watch(hasExistingUserProvider);
     return _stream.when(
-      data: (data) => _handleWhenData(data,ref),
-      error: (e, st, data) => Text('error: $e'),
-      loading: (data) => const Center(child: CircularProgressIndicator()),
+      data: (data) => AppHomePage(),
+      loading: () => CircularProgressIndicator(),
+      error: (
+        val,
+        st,
+      ) =>
+          Text('error'),
     );
   }
 
