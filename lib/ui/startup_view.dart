@@ -15,22 +15,17 @@ class StartupView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _stream = ref.watch(authStateChangesStreamProvider);
-    // final hasExistingUser = ref.watch(hasExistingUserProvider);
+    // final _stream = ref.watch(authStateChangesStreamProvider);
+    final _stream = ref.read(currentAuthUserProvider);
     return _stream.when(
-      data: (data) => AppHomePage(),
-      loading: () => CircularProgressIndicator(),
-      error: (
-        val,
-        st,
-      ) =>
-          Text('error'),
+      data: (data) => _handleWhenData(data, ref),
+      loading: (data) => Center(child: CircularProgressIndicator()),
+      error: (val, st, data) => Text('error'),
     );
   }
 
   _handleWhenData(User? user, WidgetRef ref) {
     if (user != null) {
-      
       final notifier = ref.watch(authStateProvider.notifier);
       // final authState = thisRef.watch(authStateProvider);
       notifier.setUserInAuthState(user);

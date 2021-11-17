@@ -61,9 +61,9 @@ class AppUser extends Equatable {
   @override
   String toString() {
     return '''
-  PRINTING APPUSER
-  userId=$userId
-  roles=${roles.map((e) => e.roleName.toString())}
+   APPUSER:
+  userId = $userId
+  roles = ${roles.map((e) => e.roleName.toString())}
 
   ''';
   }

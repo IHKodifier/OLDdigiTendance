@@ -64,13 +64,8 @@ class AuthState extends Equatable {
     // TODO: implement toString
 
     return '''
-    printing Authentication state
-    
-    authenticatedUser=${authenticatedUser!.toString()}
-    userRoles=${authenticatedUser!.roles.map((e) => e.roleName)}
-    selectedRole=${selectedRole!.roleName}
-    isBusy=${isBusy.toString()}
-    photoUrl=${photoURL}
+   Authentication state = 
+     uthenticatedUser=${authenticatedUser!.toString()}   userRoles=${authenticatedUser!.roles.map((e) => e.roleName)}    selectedRole=${selectedRole!.roleName}    isBusy=${isBusy.toString()}     photoUrl=${photoURL}
     ''';
   }
 

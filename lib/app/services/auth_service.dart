@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 enum LoginProvider { EmailPassword, Google, Facebook, Twitter, Phone }
 
-class AuthService {
+class AuthApi {
   final FirebaseAuth instance;
   late UserCredential userCredential;
   String _email = '';
@@ -15,7 +15,7 @@ class AuthService {
   // ignore: prefer_final_fields
   String _phone = '';
 
-  AuthService(this.instance);
+  AuthApi(this.instance);
 
   Stream<User?> get authStateChanges => instance.authStateChanges();
 

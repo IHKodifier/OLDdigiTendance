@@ -13,7 +13,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   // ignore: prefer_typing_uninitialized_variables
   AppUser? appUser;
   User? user;
-  AuthService? authService;
+  AuthApi? authApi;
   final thisref;
 
   Future<void> login({
@@ -21,8 +21,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String email,
     required String password,
   }) async {
-    authService = thisref.watch(authServiceProvider);
-    user = await authService!.login(
+    authApi = thisref.watch(authApiProvider);
+    user = await authApi!.login(
       loginProvider: LoginProvider.EmailPassword,
       email: email,
       password: password,
@@ -32,7 +32,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   setUserInAuthState(User? user) async {
     //TODO transform to AppUser and set then set state
-    final firestoreService = thisref.watch(firestoreServiceProvider);
+    final firestoreService = thisref.watch(firestoreApiProvider);
     var data = await firestoreService.getAppUserDoc(userId: user!.email);
     AppUser appUser = AppUser.fromJson(data, user!.email);
     // appUser = AppUser.fromFirebaseUser(user!);
@@ -52,7 +52,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> signOut() async {
-    authService = thisref.watch(authServiceProvider);
-    authService!.signOut();
+    authApi = thisref.watch(authApiProvider);
+    await authApi!.signOut();
+    Utilities.log(FirebaseAuth.instance.currentUser.toString());
   }
 }

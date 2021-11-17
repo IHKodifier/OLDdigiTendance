@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitendance/app/models/app_user.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
@@ -13,44 +14,72 @@ import '../states/auth_state.dart';
 
 ///TODO declare all providers here
 ///
-///[firebaseAuthInstanceProvider] shall provide the
+///
+///
+///
+///
+///
+///                                  INSTANCE PROVIDERS
+
+//////[authInstanceProvider] shall provide the
 ///[FirebaseAuth] instance to the entire app
-final firebaseAuthInstanceProvider = Provider<FirebaseAuth>((ref) {
-  FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-  final val = FirebaseAuth.instance;
+final Provider<FirebaseAuth> authInstanceProvider =
+    Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
+//
 
-  return val;
-});
-
-//[firestoreProvider] shall provide the firestore instance
+///[firestoreProvider] shall provide the firestore instance
 final firestoreProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
 );
 
-///[authServiceProvider] shall provide the[AuthService]
-///instance app wide
-final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService(ref.read(firebaseAuthInstanceProvider));
-});
+///
+///
+///
+///
+///
+//                                    SERVICE PROVIDERS
+///shall provide the[AuthApi] instance
+final authApiProvider = Provider<AuthApi>(
+  (ref) => AuthApi(
+    ref.read(authInstanceProvider),
+  ),
+);
 
-///[firestoreServiceProvider] shall provide the [FirestoreService] App Wide
-final firestoreServiceProvider =
-    Provider<FirestoreService>((ref) => FirestoreService());
+/// shall provide the [FirestoreApi] instance
+final firestoreApiProvider = Provider<FirestoreApi>((ref) => FirestoreApi());
 
-///[authStateChangesStreamProvider] listens to [AuthStatechanges] and yields a
-///firebase [User] or [null] when the auth state changes
-final authStateChangesStreamProvider = StreamProvider<User?>((ref) async* {
-  yield* ref.watch(firebaseAuthInstanceProvider).authStateChanges();
-});
+///
+///
+///
+///
+//                                      STATE PROVIDERS
+///listens to [AuthStatechanges]  on [FirebaseAuth] instance and yields a firebase [User] or [null] when the auth state changes
+final authStateChangesStreamProvider = StreamProvider<User?>(
+    (ref) => ref.watch(authInstanceProvider).authStateChanges());
 
-///[authStateProvider] shall provide []AuthNotifier]
-/// and [AuthState] app wide
+/// shall provide [AuthNotifier] and [AuthState]
 final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(AuthState, ref);
 });
 
-/// [hasExistingUserprovider] checks for the [currentUser] property
-/// of [FireBaseAuthInstance] to see if a user is already authenticated
-final hasExistingUserProvider = FutureProvider<User?>((ref) {
-  return ref.read(firebaseAuthInstanceProvider).currentUser;
+///  checks for the [currentUser] property  of [FireBaseAuthInstance] to see if a user is already authenticated
+final currentAuthUserProvider =
+    FutureProvider<User?>((ref) => FirebaseAuth.instance.currentUser);
+
+///fetches the [AppUser] for the currently signed
+
+final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
+  final User? authUser = ref.read(authInstanceProvider).currentUser;
+  final FirestoreApi firestoreApi = ref.read(firestoreApiProvider);
+  if (authUser != null) {
+    var data = await firestoreApi.getAppUserDoc(userId: authUser.email!);
+    AppUser _appUser = AppUser.fromJson(data!, data['email']);
+    return _appUser;
+  }
 });
+
+// /// [hasExistingUserprovider] checks for the [currentUser] property
+// /// of [FireBaseAuthInstance] to see if a user is already authenticated
+// final hasExistingUserProvider = FutureProvider<User?>((ref) {
+//   return ref.read(firebaseAuthInstanceProvider).currentUser;
+// });

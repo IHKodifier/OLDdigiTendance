@@ -3,7 +3,7 @@ import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
 
-class FirestoreService {
+class FirestoreApi {
   final FirebaseFirestore instance = FirebaseFirestore.instance;
   late QuerySnapshot<Map<String, dynamic>> querySnapshot;
 
