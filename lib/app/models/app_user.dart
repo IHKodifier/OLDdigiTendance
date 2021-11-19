@@ -19,6 +19,11 @@ class AppUser extends Equatable {
     // userId = data['userId'];
     // _handleUserRoles(data);
     this.userId = data['userId'];
+    this.additionalAppUserInfo = AdditionalAppUserInfo(
+      email: data['userId'],
+      providerId: 'Email',
+      
+    );
 
     _handleUserRoles(data);
     // additionalAppUserInfo!.photoUrl = data['photoURL'];

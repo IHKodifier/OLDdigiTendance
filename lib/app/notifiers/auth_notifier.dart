@@ -34,13 +34,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     //TODO transform to AppUser and set then set state
     final firestoreService = thisref.watch(firestoreApiProvider);
     var data = await firestoreService.getAppUserDoc(userId: user!.email);
-    AppUser appUser = AppUser.fromJson(data, user!.email);
+    AppUser appUser = AppUser.fromJson(data, user.email);
     // appUser = AppUser.fromFirebaseUser(user!);
     // final authstate = thisref.watch(authStateProvider);
     // var newState = AuthState().initializeFrom(state);
     // newstate.
 
     state.authenticatedUser = appUser;
+    state.authenticatedUser!.additionalAppUserInfo!.email = user.email;
     state.hasAuthenticatedUser = true;
     state.isBusy = false;
     state.selectedRole = state.authenticatedUser!.roles[0];

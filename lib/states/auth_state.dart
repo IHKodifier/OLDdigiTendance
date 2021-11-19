@@ -10,11 +10,7 @@ class AuthState extends Equatable {
   bool isBusy = false;
   AppUser? authenticatedUser;
   bool? hasAuthenticatedUser;
-  String photoURL =
-      'https://cdn1.iconfinder.com/data/icons/avatar-97/32/avatar-02-512.png';
-  final someProvider = Provider<String>((ref) {
-    return 'some value';
-  });
+  String photoURL ='https://cdn1.iconfinder.com/data/icons/avatar-97/32/avatar-02-512.png';
 
   UserRole? selectedRole;
 

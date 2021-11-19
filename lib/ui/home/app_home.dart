@@ -12,18 +12,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppHomePage extends ConsumerWidget {
   // final String title;
-  const AppHomePage({Key? key}) : super(key: key);
-  Widget onError(error, st, user) {
-    return Center(child: Text('error ${error.toString()}'));
-  }
-
-  Widget onLoading(user) {
-    return Center(child: CircularProgressIndicator());
-  }
+  AppHomePage({Key? key}) : super(key: key);
+  late AuthState authState;
 
   @override
   Widget build(context, ref) {
-    // final AuthState authstate = ref.watch(authStateProvider);
+    authState = ref.watch(authStateProvider);
     final asyncUser = ref.watch(currentAppUserProvider);
     return asyncUser.when(
       error: onError,
@@ -32,23 +26,36 @@ class AppHomePage extends ConsumerWidget {
     );
   }
 
-  Widget onData(AppUser? user) {
+  Widget onError(error, st, user) {
+    return Center(child: Text('error ${error.toString()}'));
+  }
+
+  Widget onLoading(user) {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget onData(
+    AppUser? user,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('DigiTendance'),
+        actions: [
+          UserAvatar(),
+        ],
         centerTitle: true,
       ),
       backgroundColor: Colors.white54,
-      body: getUserHome(user!),
+      body: getUserHome(user!, authState),
     );
   }
 
-  getUserHome(AppUser user) {
+  getUserHome(AppUser user, AuthState authstate) {
     int x = 2;
-    if (user.roles[0] == UserRole.admin) {
+    if (authstate.selectedRole == UserRole.admin) {
       return const AdminAppHome();
     }
-    if (user.roles[0] == UserRole.teacher) {
+    if (authstate.selectedRole == UserRole.teacher) {
       return const TeacherAppHome();
     } else {
       return const StudentAppHome();
