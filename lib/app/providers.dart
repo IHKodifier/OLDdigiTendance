@@ -84,25 +84,16 @@ final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
 });
 
 /// [coursesStreamProvider] provides stream of [Course] from firestore
-final coursesStreamProvider = StreamProvider<Course?>((ref) async* {
-  final fireStream =
-      ref.watch(firestoreProvider).collection('courses').snapshots();
-  fireStream.forEach((element) {
 
-
-
-
-
-
-    // ignore: avoid_function_literals_in_foreach_calls
-    // ignore: void_checks
-    element.docs.forEach((doc) async* {
-
-    
-      yield Course.fromMap(doc.data());
-    });
-  });
+final coursesStreamProvider =
+    StreamProvider<QuerySnapshot<Map<String, dynamic>>>((ref) {
+  return ref.watch(firestoreProvider).collection('courses').snapshots();
 });
+  
+
+
+
+
 
 ///
 ///
