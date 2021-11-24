@@ -2,7 +2,7 @@ import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/ui/home/app_home.dart';
+import 'package:digitendance/ui/home/app_homeview.dart';
 import 'package:digitendance/ui/login/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,18 +20,14 @@ class LoginView extends ConsumerWidget {
     // final authState = ref.watch(authStateProvider);
     // final notifier = ref.read(authStateProvider.notifier);
 
-    return stream.when(
-      error: (e, st, data) {
+    return stream.when(error: (e, st, data) {
       return Container(
         height: 50,
         color: Colors.blue,
       );
-    }, 
-    loading: (data) {
+    }, loading: (data) {
       return Center(child: CircularProgressIndicator());
-    }, 
-    data: (data) {
-      
+    }, data: (data) {
       return _haandleUserInData(data);
       // return Container(
       //   color: Colors.black.withOpacity(0.65),
@@ -71,7 +67,7 @@ class LoginView extends ConsumerWidget {
 
   _haandleUserInData(var user) {
     if (user.runtimeType == User) {
-      return AppHomePage();
+      return AppHomeView();
     } else {
       return LoginPage();
     }
@@ -228,6 +224,23 @@ class _LoginForm extends ConsumerWidget {
               style: TextStyle(fontSize: 22),
             )),
       ),
+    );
+  }
+}
+
+
+class bdsm extends StatefulWidget {
+  const bdsm({ Key? key }) : super(key: key);
+
+  @override
+  _bdsmState createState() => _bdsmState();
+}
+
+class _bdsmState extends State<bdsm> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'package:digitendance/app/models/app_user.dart';
+import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {
@@ -14,7 +16,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   AppUser? appUser;
   User? user;
   AuthApi? authApi;
-  final thisref;
+  ProviderRefBase thisref;
 
   Future<void> login({
     required LoginProvider loginProvider,
@@ -27,29 +29,41 @@ class AuthNotifier extends StateNotifier<AuthState> {
       email: email,
       password: password,
     );
-    if (user != null) setUserInAuthState(user);
+    if (user != null) await setUserInAuthState(user);
   }
 
   setUserInAuthState(User? user) async {
     //TODO transform to AppUser and set then set state
     final firestoreService = thisref.watch(firestoreApiProvider);
     var data = await firestoreService.getAppUserDoc(userId: user!.email);
-    AppUser appUser = AppUser.fromJson(data, user.email);
+    AppUser appUser = AppUser.fromJson(data, user!.email);
     // appUser = AppUser.fromFirebaseUser(user!);
     // final authstate = thisref.watch(authStateProvider);
     // var newState = AuthState().initializeFrom(state);
     // newstate.
-
-    state.authenticatedUser = appUser;
-    state.authenticatedUser!.additionalAppUserInfo!.email = user.email;
-    state.hasAuthenticatedUser = true;
-    state.isBusy = false;
-    state.selectedRole = state.authenticatedUser!.roles[0];
+    AuthState newState = AuthState().cloneFrom(state);
+    newState.authenticatedUser = appUser;
+    // newState.authenticatedUser!.additionalAppUserInfo!.email = user.email;
+    newState.hasAuthenticatedUser = true;
+    newState.isBusy = false;
+    newState.selectedRole = newState.authenticatedUser!.roles[0];
+    // Utilities.log(''''
+    //   AuthState equals
+    //   ${state.toString()}
+    //   ''');
+    state = newState;
     Utilities.log(''''
-      AuthState equals 
-      ${state.toString()}
+      AuthState has been updated . new state equals  
+      ${newState.toString()}
       ''');
-    // state = newState;
+  }
+
+  void setSelectedRole(UserRole role) {
+    AuthState newState = AuthState().cloneFrom(state);
+
+    newState.selectedRole = role;
+    // newState.authenticatedUser = state.authenticatedUser;
+    state = newState;
   }
 
   Future<void> signOut() async {

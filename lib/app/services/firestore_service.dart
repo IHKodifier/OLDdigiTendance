@@ -23,7 +23,7 @@ class FirestoreApi {
     }
   }
 
-  Future<Map<String, dynamic>?> getAppUserDoc({required String userId}) async {
+  Future<Map<String, dynamic>?> getAppUserDoc({required String? userId}) async {
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await instance
         .collection('appUsers')
         .where('userId', isEqualTo: userId)

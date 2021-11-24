@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/app_user.dart';
+import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
@@ -25,8 +26,9 @@ import '../states/auth_state.dart';
 ///[FirebaseAuth] instance to the entire app
 final Provider<FirebaseAuth> authInstanceProvider =
     Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
-//
 
+///
+///
 ///[firestoreProvider] shall provide the firestore instance
 final firestoreProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
@@ -37,7 +39,8 @@ final firestoreProvider = Provider<FirebaseFirestore>(
 ///
 ///
 ///
-//                                    SERVICE PROVIDERS
+///
+///                                    SERVICE PROVIDERS
 ///shall provide the[AuthApi] instance
 final authApiProvider = Provider<AuthApi>(
   (ref) => AuthApi(
@@ -45,6 +48,7 @@ final authApiProvider = Provider<AuthApi>(
   ),
 );
 
+///
 /// shall provide the [FirestoreApi] instance
 final firestoreApiProvider = Provider<FirestoreApi>((ref) => FirestoreApi());
 
@@ -52,7 +56,8 @@ final firestoreApiProvider = Provider<FirestoreApi>((ref) => FirestoreApi());
 ///
 ///
 ///
-//                                      STATE PROVIDERS
+///
+///                                      STATE PROVIDERS
 ///listens to [AuthStatechanges]  on [FirebaseAuth] instance and yields a firebase [User] or [null] when the auth state changes
 final authStateChangesStreamProvider = StreamProvider<User?>(
     (ref) => ref.watch(authInstanceProvider).authStateChanges());
@@ -78,6 +83,30 @@ final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
   }
 });
 
+/// [coursesStreamProvider] provides stream of [Course] from firestore
+final coursesStreamProvider = StreamProvider<Course?>((ref) async* {
+  final fireStream =
+      ref.watch(firestoreProvider).collection('courses').snapshots();
+  fireStream.forEach((element) {
+
+
+
+
+
+
+    // ignore: avoid_function_literals_in_foreach_calls
+    // ignore: void_checks
+    element.docs.forEach((doc) async* {
+
+    
+      yield Course.fromMap(doc.data());
+    });
+  });
+});
+
+///
+///
+///
 // /// [hasExistingUserprovider] checks for the [currentUser] property
 // /// of [FireBaseAuthInstance] to see if a user is already authenticated
 // final hasExistingUserProvider = FutureProvider<User?>((ref) {

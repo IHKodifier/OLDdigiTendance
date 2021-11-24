@@ -4,15 +4,16 @@ import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/shared/user_avatar.dart';
 import 'package:digitendance/states/auth_state.dart';
 import 'package:digitendance/ui/home/admin_app_home.dart';
+import 'package:digitendance/ui/home/home_route_resolver.dart';
 import 'package:digitendance/ui/home/student_app_home.dart';
 import 'package:digitendance/ui/home/teacher_app_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AppHomePage extends ConsumerWidget {
+class AppHomeView extends ConsumerWidget {
   // final String title;
-  AppHomePage({Key? key}) : super(key: key);
+  AppHomeView({Key? key}) : super(key: key);
   late AuthState authState;
 
   @override
@@ -37,28 +38,6 @@ class AppHomePage extends ConsumerWidget {
   Widget onData(
     AppUser? user,
   ) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('DigiTendance'),
-        actions: [
-          UserAvatar(),
-        ],
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.white54,
-      body: getUserHome(user!, authState),
-    );
-  }
-
-  getUserHome(AppUser user, AuthState authstate) {
-    int x = 2;
-    if (authstate.selectedRole == UserRole.admin) {
-      return const AdminAppHome();
-    }
-    if (authstate.selectedRole == UserRole.teacher) {
-      return const TeacherAppHome();
-    } else {
-      return const StudentAppHome();
-    }
+    return HomeRouteResolver();
   }
 }

@@ -1,7 +1,7 @@
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
-import 'package:digitendance/ui/home/app_home.dart';
+import 'package:digitendance/ui/home/app_homeview.dart';
 import 'package:digitendance/ui/login/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,7 +29,7 @@ class StartupView extends ConsumerWidget {
       final notifier = ref.watch(authStateProvider.notifier);
       // final authState = thisRef.watch(authStateProvider);
       notifier.setUserInAuthState(user);
-      return AppHomePage();
+      return AppHomeView();
     } else {
       return LoginView();
     }

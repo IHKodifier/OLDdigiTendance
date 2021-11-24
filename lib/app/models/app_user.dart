@@ -15,10 +15,10 @@ class AppUser extends Equatable {
   AdditionalAppUserInfo? additionalAppUserInfo;
   String? get email => additionalAppUserInfo!.email;
 
-  AppUser.fromJson(Map<String, dynamic> data, this.userId) {
+  AppUser.fromJson(Map<String, dynamic>? data, this.userId) {
     // userId = data['userId'];
     // _handleUserRoles(data);
-    this.userId = data['userId'];
+    this.userId = data!['userId'];
     this.additionalAppUserInfo = AdditionalAppUserInfo(
       email: data['userId'],
       providerId: 'Email',
@@ -66,10 +66,7 @@ class AppUser extends Equatable {
   @override
   String toString() {
     return '''
-   APPUSER:
-  userId = $userId
-  roles = ${roles.map((e) => e.roleName.toString())}
-
+   AppUser equals  userId = $userId && roles = ${roles.map((e) => e.roleName.toString())})
   ''';
   }
 }

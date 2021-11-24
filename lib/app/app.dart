@@ -1,4 +1,4 @@
-import 'package:digitendance/ui/home/app_home.dart';
+import 'package:digitendance/ui/home/app_homeview.dart';
 import 'package:digitendance/ui/startup_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

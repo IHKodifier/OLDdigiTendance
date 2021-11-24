@@ -4,13 +4,15 @@ import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthState extends Equatable {
   bool isBusy = false;
   AppUser? authenticatedUser;
   bool? hasAuthenticatedUser;
-  String photoURL ='https://cdn1.iconfinder.com/data/icons/avatar-97/32/avatar-02-512.png';
+  String photoURL =
+      'https://cdn1.iconfinder.com/data/icons/avatar-97/32/avatar-02-512.png';
 
   UserRole? selectedRole;
 
@@ -36,20 +38,20 @@ class AuthState extends Equatable {
   @override
   // TODO: implement props
   List<Object?> get props => [
-        isBusy,
+        // isBusy,
         authenticatedUser,
         // photoURL,
-        selectedRole ?? null,
+        selectedRole,
         // hasAuthenticatedUser,
       ];
 
-  AuthState initializeFrom(AuthState source) {
+  AuthState cloneFrom(AuthState source) {
     final clone = AuthState();
     // if (source._authenticatedUser != null) {
     //   clone._authenticatedUser = source._authenticatedUser;
     // }
     // clone.asyncStatus = source.asyncStatus;
-    // clone.authenticatedUser = source.authenticatedUser;
+    clone.authenticatedUser = source.authenticatedUser;
     // clone.isBusy = source.isBusy;
     // clone.selectedRole = source.selectedRole;
     return clone;
@@ -60,8 +62,7 @@ class AuthState extends Equatable {
     // TODO: implement toString
 
     return '''
-   Authentication state = 
-     uthenticatedUser=${authenticatedUser!.toString()}   userRoles=${authenticatedUser!.roles.map((e) => e.roleName)}    selectedRole=${selectedRole!.roleName}    isBusy=${isBusy.toString()}     photoUrl=${photoURL}
+   AuthState(authenticatedUser=${authenticatedUser!.toString()}   selectedRole=${selectedRole?.roleName}    isBusy=${isBusy.toString()}     photoUrl=$photoURL)
     ''';
   }
 
