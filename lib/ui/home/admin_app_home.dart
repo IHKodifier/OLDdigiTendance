@@ -187,7 +187,7 @@ class _AdminMenuCard extends StatelessWidget {
     return Material(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.20,
-        margin: EdgeInsets.all(4),
+        margin: EdgeInsets.all(8),
         height: 220,
         child: InkWell(
           hoverColor: Colors.purple.shade300,
