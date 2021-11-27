@@ -5,3 +5,4 @@ class CourseNotifier extends StateNotifier<Course> {
   final ProviderRefBase ref;
   CourseNotifier(state, this.ref) : super(state);
 }
+/// just another commit to come out pf remote push cancelled syndrome
