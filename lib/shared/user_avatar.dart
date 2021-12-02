@@ -62,7 +62,7 @@ class _RolesDropDown extends ConsumerWidget {
     return Container(
       width: 100,
       child: DropdownButton<String>(
-        dropdownColor: Theme.of(context).primaryColorLight,
+        // dropdownColor: Theme.of(context).primaryColorLight,
         isDense: true,
         autofocus: true,
         value: authState.selectedRole!.roleName,
@@ -73,7 +73,8 @@ class _RolesDropDown extends ConsumerWidget {
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1!
-                          .copyWith(color: Colors.white)),
+                          .copyWith(color: Theme.of(context).primaryColor,
+                          fontSize: 18,)),
                   value: e.roleName),
             )
             .toList(),

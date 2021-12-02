@@ -62,6 +62,7 @@ class _CourseDetailBody extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyText1,
             ),
             PreReqsList(),
+            SessionsListWidget(),
           ],
         ),
       ),
@@ -85,17 +86,40 @@ class PreReqsList extends ConsumerWidget {
           height: 250,
           width: 400,
           child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) { 
-                return Material (
-                  elevation: 15,
-                  child: ListTile(
-                    title: Text(data[index].data()['courseId']),
-                    ),
-                );},
-                ),),
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return Material(
+                elevation: 15,
+                child: ListTile(
+                  title: Text(data[index].data()['courseId']),
+                ),
+              );
+            },
+          ),
         ),
-      );
-    
+      ),
+    );
+  }
+}
+
+class SessionsListWidget extends ConsumerWidget {
+  const SessionsListWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sessionList = ref.watch(sessionListProvider);
+    return sessionList.when(data: onData, error: onError, loading: onLoading);
+  }
+
+  Widget onLoading(AsyncValue? data) {
+    return Center(child: Container());
+  }
+
+  Widget onError(object, StackTrace? st, AsyncData<dynamic>? data) {
+    return Center(child: Text('error Encountered ${object.toString()}'));
+  }
+
+  Widget onData(dynamic data) {
+    return Center(child: Text(data.toString()));
   }
 }

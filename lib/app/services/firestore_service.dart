@@ -35,7 +35,14 @@ class FirestoreApi {
     }
   }
 
-
-
-
+  Future<QuerySnapshot<Map<String, dynamic>?>?>? getSessionsforCourse(
+      {required String courseId}) async {
+    querySnapshot = await instance
+        .collection('courses')
+        .where('courseId', isEqualTo: courseId)
+        .get()
+        .then((value) {
+     return  value.docs[0].reference.collection('sessions').get();
+    });
+  }
 }

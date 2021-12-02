@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/app_user.dart';
 import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
@@ -103,15 +104,15 @@ var colorsList = [
   Colors.red,
   Colors.red.shade100,
   // Colors.red.shade200,
-  Colors.red.shade300,
+  // Colors.red.shade300,
   // Colors.red.shade400,
   Colors.red.shade500,
   // Colors.red.shade600,
-  Colors.red.shade700,
+  // Colors.red.shade700,
   // Colors.red.shade800,
-  Colors.red.shade50,
+  // Colors.red.shade50,
   // Colors.deepOrange,
-  Colors.deepOrange.shade50,
+  // Colors.deepOrange.shade50,
   Colors.deepOrange.shade100,
   // Colors.deepOrange.shade200,
   Colors.deepOrange.shade300,
@@ -120,7 +121,7 @@ var colorsList = [
   // Colors.deepOrange.shade600,
   Colors.deepOrange.shade700,
   // Colors.deepOrange.shade800,
-  Colors.orange,
+  // Colors.orange,
   Colors.redAccent,
   Colors.blueGrey.shade200,
   Colors.greenAccent,
@@ -140,15 +141,36 @@ final courseProvider = StateNotifierProvider<CourseNotifier, Course>((ref) {
 
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
 // final preReqsProvider =
-final preReqsProvider = FutureProvider<List<QueryDocumentSnapshot<Map<String, dynamic>>>>((ref) async {
+final preReqsProvider =
+    FutureProvider<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+        (ref) async {
   final course = ref.read(courseProvider);
-
-
-
-  return ref.read(firestoreProvider).collection('courses').where('courseId',isEqualTo:course.courseId).get().then((value) =>  value.docs[0].reference.collection('preReqs').get().then((value) => value.docs));
+  return ref
+      .read(firestoreProvider)
+      .collection('courses')
+      .where('courseId', isEqualTo: course.courseId)
+      .get()
+      .then((value) => value.docs[0].reference
+          .collection('preReqs')
+          .get()
+          .then((value) => value.docs));
 });
+// ignore: deprecated_member_use
+/// [sessionListProvider] provides all the session for a [Course]
+final sessionListProvider = FutureProvider<dynamic>((ref) async {
+  final Course course = ref.read(courseProvider);
 
+  final sessionsMap =
+      await FirestoreApi().getSessionsforCourse(courseId: course.courseId!);
+  // ignore: avoid_function_literals_in_foreach_calls
+  List<Session> sessionList = sessionsMap!.docs
+      .map((element) => Session.fromData(element.data()!))
+      .toList();
 
+  return sessionList;
+
+  // return ;
+});
 
 
 
