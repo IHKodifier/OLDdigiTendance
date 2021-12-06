@@ -27,9 +27,8 @@ class CourseDetailPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_)=>EditCourse()));
-          
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const EditCourse()));
         },
         icon: Icon(Icons.edit),
         label: Text(

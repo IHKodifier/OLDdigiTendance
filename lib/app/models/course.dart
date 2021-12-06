@@ -41,4 +41,15 @@ ${sessions!.map((e) => e.toString())}
     )
     ''';
   }
+
+  Map<String, dynamic> toMap() {
+    var _map = {
+ 'courseId': courseId,
+  'courseTitle': courseTitle,
+ 'credits': credits ,
+//   preReqs = [];
+//  sessions = [];
+    };
+    return _map;
+  }
 }

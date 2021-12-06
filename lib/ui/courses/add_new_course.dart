@@ -5,59 +5,57 @@ import 'package:digitendance/app/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EditCourse extends ConsumerWidget {
-  const EditCourse({Key? key}) : super(key: key);
+class NewCourse extends ConsumerWidget {
+  const NewCourse({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.watch(courseProvider.notifier);
-    final state = notifier.state;
+    final Course state = Course(
+      courseId: '',
+      courseTitle: '',
+      credits: 0,
+      preReqs: [],
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Course "${state.courseTitle}"'),
+        title: Text('New Course: ${state.courseTitle}'),
       ),
-      body: EditCourseBody(state),
+      body: NewCourseBody(state),
       // Center(child: Text(state.toString(),
     );
   }
 }
 
-class EditCourseBody extends ConsumerStatefulWidget {
-  final course;
+class NewCourseBody extends ConsumerStatefulWidget {
+  final Course course;
 
-  EditCourseBody(this.course);
+  NewCourseBody(this.course);
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _EditCourseBodyState(course);
+      _NewCourseBodyState(course);
 }
 
-class _EditCourseBodyState extends ConsumerState<EditCourseBody> {
+class _NewCourseBodyState extends ConsumerState<NewCourseBody> {
+  final Course course;
   TextEditingController courseTitleController = TextEditingController();
   TextEditingController courseIdController = TextEditingController();
   TextEditingController courseCreditController = TextEditingController();
   TextEditingController facultyController = TextEditingController();
 
-  _EditCourseBodyState(this.course);
-  // final bool isEditMode;
-  @override
-  // TODO: implement ref
-  WidgetRef get ref => super.ref;
-
-  final Course course;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    courseTitleController.text = course.courseTitle!;
-    courseIdController.text = course.courseId!;
-    courseCreditController.text =
-        course!.credits == 0 ? '' : course.credits.toString();
-    super.initState();
-  }
+  _NewCourseBodyState(this.course);
+// @override
+// void initState() {
+//     // TODO: implement initState
+//     courseTitleController.text = '';
+//     courseIdController.text = ;
+//     courseCreditController.text =
+//         course!.credits == 0 ? '' : course.credits.toString();
+//     super.initState();
+//   }
 
   @override
   Widget build(BuildContext context) {
-    var _formKey = GlobalKey<_EditCourseBodyState>();
+    var _formKey = GlobalKey<_NewCourseBodyState>();
 
     return Center(
       child: Container(
@@ -161,17 +159,24 @@ class _EditCourseBodyState extends ConsumerState<EditCourseBody> {
   }
 
   onPressed() {
-   
-      // course.courseId = courseIdController.text;
-      // course.courseTitle = courseTitleController.text;
-      // course.credits = int.parse(courseCreditController.text);
-      // course.preReqs = [Course(courseId: 'Agroo Id',
-      // courseTitle: 'Bagroo CourseTitle',
-      // credits: 199),
-      // ];
-      // course.sessions = [Session(sessionId: 'sessionId99', sessionTitle: 'SessionTtile 99', faculty: Faculty(userId: 'faculty 99@qw.com'))];
+    course.courseId = courseIdController.text;
+    course.courseTitle = courseTitleController.text;
+    course.credits = int.parse(courseCreditController.text);
+    course.preReqs = [
+      Course(
+          courseId: 'Agroo Id',
+          courseTitle: 'Bagroo CourseTitle',
+          credits: 199),
+    ];
+    course.sessions = [
+      Session(
+          sessionId: 'sessionId99',
+          sessionTitle: 'SessionTtile 99',
+          faculty: Faculty(userId: 'faculty 99@qw.com'))
+    ];
 
-      // ref.read(firestoreApiProvider).addNewCourse(course);
-    
+    ref.read(firestoreApiProvider).addNewCourse(course).then((value) =>
+        ScaffoldMessenger.maybeOf(context)!.showSnackBar(SnackBar(
+            content: Text('New Course [[ ${course.courseId} ]] has been Successsfully Saved'))));
   }
 }

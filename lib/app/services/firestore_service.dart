@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
@@ -47,5 +48,13 @@ class FirestoreApi {
 
       return await value.docs[0].reference.collection('sessions').get();
     });
+  }
+
+  Future<DocumentReference> addNewCourse(Course course) {
+    return  instance
+        .collection('courses')
+        .add(course.toMap())
+        .then((value) => value);
+    
   }
 }

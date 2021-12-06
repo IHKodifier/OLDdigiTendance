@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
+import 'package:digitendance/app/notifiers/edit_course.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/add_new_course.dart';
 import 'package:digitendance/ui/courses/course_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,11 +28,13 @@ class CoursesPage extends ConsumerWidget {
         error: (e, st, data) => Center(child: Text(e.toString())),
         loading: (_) => const Center(child: CircularProgressIndicator()),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          final courseNotifier = ref.watch(courseProvider.notifier);
           navigateToAddCourse(context);
         },
-        child: const Icon(
+        label: const Text('New Course'),
+        icon: const Icon(
           Icons.add,
           size: 40,
         ),
@@ -42,7 +46,7 @@ class CoursesPage extends ConsumerWidget {
 
   navigateToAddCourse(BuildContext context) {
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const CourseDetailPage()));
+        MaterialPageRoute(builder: (context) => const NewCourse()));
   }
 }
 
@@ -135,7 +139,7 @@ class CourseCard extends ConsumerWidget {
 
   _setCourseInStateProvider(BuildContext context) {
     notifier.state = course;
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_)=>const CourseDetailPage()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const CourseDetailPage()));
   }
 }
