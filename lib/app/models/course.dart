@@ -15,7 +15,7 @@ class Course {
     // ignore: avoid_init_to_null
     this.preReqs = null,
   });
-  Course.fromMap(Map<String, dynamic> data) {
+  Course.fromData(Map<String, dynamic> data) {
     courseId = data['courseId'];
     courseTitle = data['courseTitle'];
     // preReqs = data['preReqs'];
@@ -28,7 +28,17 @@ class Course {
   @override
   String toString() {
     return ''' 
-    Course ($courseId,$courseTitle,${credits.toString()})
+    Printing Course 
+    courseId: $courseId
+    courseTitle: $courseTitle
+    Credits ${credits.toString()}
+
+    number of preReqs: ${preReqs!.length}
+    ${preReqs!.map((e) => e.courseId.toString())}
+
+   number of Sessions: ${sessions!.length}
+${sessions!.map((e) => e.toString())}
+    )
     ''';
   }
 }

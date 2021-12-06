@@ -41,8 +41,11 @@ class FirestoreApi {
         .collection('courses')
         .where('courseId', isEqualTo: courseId)
         .get()
-        .then((value) {
-     return  value.docs[0].reference.collection('sessions').get();
+        .then((value) async {
+      Utilities.log(
+          ' sessions query length on $courseId equals ${value.docs.length.toString()}');
+
+      return await value.docs[0].reference.collection('sessions').get();
     });
   }
 }

@@ -2,7 +2,7 @@ import 'package:digitendance/app/models/app_user.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/services/auth_service.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
+// import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';

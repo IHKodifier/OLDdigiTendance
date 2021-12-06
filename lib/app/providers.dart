@@ -103,25 +103,9 @@ final colorPalleteProvider = Provider<dynamic>((ref) {
 var colorsList = [
   Colors.red,
   Colors.red.shade100,
-  // Colors.red.shade200,
-  // Colors.red.shade300,
-  // Colors.red.shade400,
   Colors.red.shade500,
-  // Colors.red.shade600,
-  // Colors.red.shade700,
-  // Colors.red.shade800,
-  // Colors.red.shade50,
-  // Colors.deepOrange,
-  // Colors.deepOrange.shade50,
   Colors.deepOrange.shade100,
-  // Colors.deepOrange.shade200,
-  Colors.deepOrange.shade300,
-  // Colors.deepOrange.shade400,
   Colors.deepOrange.shade500,
-  // Colors.deepOrange.shade600,
-  Colors.deepOrange.shade700,
-  // Colors.deepOrange.shade800,
-  // Colors.orange,
   Colors.redAccent,
   Colors.blueGrey.shade200,
   Colors.greenAccent,
@@ -132,6 +116,10 @@ var colorsList = [
   Colors.indigoAccent,
   Colors.pinkAccent,
   Colors.tealAccent,
+  Colors.cyanAccent,
+  Colors.limeAccent,
+  Colors.pinkAccent,
+  Colors.amberAccent
 ];
 
 ///[courseProvider] provides inatance of [Course] managedg by [CourseNotifier]
@@ -140,54 +128,35 @@ final courseProvider = StateNotifierProvider<CourseNotifier, Course>((ref) {
 });
 
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
-// final preReqsProvider =
 final preReqsProvider =
-    FutureProvider<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-        (ref) async {
-  final course = ref.read(courseProvider);
+    FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
+  final course = ref.watch(courseProvider);
   return ref
       .read(firestoreProvider)
       .collection('courses')
       .where('courseId', isEqualTo: course.courseId)
       .get()
-      .then((value) => value.docs[0].reference
-          .collection('preReqs')
-          .get()
-          .then((value) => value.docs));
+      .then((value) =>
+          value.docs[0].reference.collection('preReqs').get().then((value) {
+            final notifier = ref.read(courseProvider.notifier);
+            notifier.setPreReqsonCourse(value);
+            return value;
+          }));
 });
-// ignore: deprecated_member_use
+
 /// [sessionListProvider] provides all the session for a [Course]
-final sessionListProvider = FutureProvider<dynamic>((ref) async {
-  final Course course = ref.read(courseProvider);
-
-  final sessionsMap =
-      await FirestoreApi().getSessionsforCourse(courseId: course.courseId!);
-  // ignore: avoid_function_literals_in_foreach_calls
-  List<Session> sessionList = sessionsMap!.docs
-      .map((element) => Session.fromData(element.data()!))
-      .toList();
-
-  return sessionList;
-
-  // return ;
+final sessionListProvider =
+    FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
+  final Course course = ref.watch(courseProvider);
+  return ref
+      .watch(firestoreProvider)
+      .collection('courses')
+      .where('courseId', isEqualTo: course.courseId)
+      .get()
+      .then((value) =>
+          value.docs[0].reference.collection('sessions').get().then((value) {
+            final notifier = ref.read(courseProvider.notifier);
+            notifier.setSessiononCourseProvider(value);
+            return value;
+          }));
 });
-
-
-
-//   FutureProvider<StreamProvider<dynamic>>>((ref) {
-  
-//   try {
-//   return ref
-//         .watch(firestoreProvider)
-//         .collection('courses')
-//         .where('courseId', isEqualTo: courseId)
-//         .get()
-//         .then((value) {
-//       return value.docs[0].reference.collection('preReqs').snapshots();
-//     });
-//   } catch (e) {
-//     Utilities.log(e.toString());
-//     rethrow;
-//   } finally {}
-//   throw Exception('IHK eception ');
-// });

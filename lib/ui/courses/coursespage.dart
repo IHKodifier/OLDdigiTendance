@@ -60,7 +60,7 @@ class CoursesList extends StatelessWidget {
           child: ListView.builder(
               itemCount: data.docs.length,
               itemBuilder: (context, index) {
-                final course = Course.fromMap(data.docs[index].data());
+                final course = Course.fromData(data.docs[index].data());
                 return CourseCard(
                   course: course,
                 );
