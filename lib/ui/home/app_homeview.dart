@@ -1,7 +1,6 @@
 import 'package:digitendance/app/models/app_user.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
-import 'package:digitendance/shared/user_avatar.dart';
 import 'package:digitendance/states/auth_state.dart';
 import 'package:digitendance/ui/home/admin_app_home.dart';
 import 'package:digitendance/ui/home/home_route_resolver.dart';

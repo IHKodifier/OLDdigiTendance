@@ -1,7 +1,6 @@
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/providers.dart';
-import 'package:digitendance/shared/user_avatar.dart';
 import 'package:digitendance/ui/courses/coursespage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

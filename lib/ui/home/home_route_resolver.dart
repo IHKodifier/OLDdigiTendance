@@ -1,10 +1,10 @@
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/shared/user_avatar.dart';
 import 'package:digitendance/ui/home/admin_app_home.dart';
 import 'package:digitendance/ui/home/student_app_home.dart';
 import 'package:digitendance/ui/home/teacher_app_home.dart';
+import 'package:digitendance/ui/shared/user_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
