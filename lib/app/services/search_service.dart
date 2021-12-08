@@ -9,7 +9,7 @@ class SearchService {
   late List<Faculty?> retval = [];
   late int ascii;
   Future<List<Faculty?>> searchFaculty(String query) async {
-    print('query length equals ${query.length.toString()}');
+    // print('query length equals ${query.length.toString()}');
     switch (query.length) {
       case 0:
         returnList = <Faculty>[];
@@ -41,8 +41,8 @@ class SearchService {
     try {
       final results = await firestoreApi.instance
           .collection('faculty')
-          .where('userId', isGreaterThanOrEqualTo: query[0].toUpperCase())
-          .where('userId', isLessThan: String.fromCharCode(ascii + 1))
+          .where('firstName', isGreaterThanOrEqualTo: query[0].toUpperCase())
+          .where('firstName', isLessThan: String.fromCharCode(ascii + 1))
           .get();
       retval = results.docs.map((e) => Faculty.fromMap(e.data())).toList();
     } catch (e) {

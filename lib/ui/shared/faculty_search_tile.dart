@@ -10,8 +10,11 @@ class FacultySearchTile extends ConsumerWidget {
     return Container(
       width: 300,
       height: 150,
-      child: Text(faculty.userId),
-
+      child: ListTile(
+        leading: const Icon(Icons.account_circle_rounded),
+        title: Text(faculty.firstName! +' ' + faculty.lastName!),
+        subtitle: Text(faculty.userId!),
+      ),
     );
   }
 }
