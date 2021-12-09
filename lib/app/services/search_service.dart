@@ -1,13 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/faculty.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 
-class SearchService {
+class SearchApi {
   late List<Faculty?> fireList = [];
   late List<Faculty?> localList = [];
   late List<Faculty?> returnList = [];
   late List<Faculty?> retval = [];
   late int ascii;
+
+  Future<QuerySnapshot<Map<String, dynamic>?>?> searchFireDocsbyName(
+      {required Future<CollectionReference> collectionReference,
+      String? fieldName,
+      required String query}) async {
+    ascii = query.codeUnitAt(0);
+    var collection = collectionReference;
+    collection.then((value) => value
+        .where(fieldName!, isGreaterThanOrEqualTo: query[0].toUpperCase())
+        .where(fieldName,
+            isLessThan: String.fromCharCode(query.codeUnitAt((ascii + 1))))
+        .get()
+        .then((value) => value));
+  }
+
   Future<List<Faculty?>> searchFaculty(String query) async {
     // print('query length equals ${query.length.toString()}');
     switch (query.length) {
@@ -35,7 +51,7 @@ class SearchService {
   }
 
   Future<List<Faculty?>> searchFacultyByName(String query) async {
-    final FirestoreApi firestoreApi= FirestoreApi();
+    final FirestoreApi firestoreApi = FirestoreApi();
     // read the query string [0] as Ascii
     ascii = query.codeUnitAt(0);
     try {
@@ -50,7 +66,6 @@ class SearchService {
     }
     return retval;
   }
-
 
   Future<List<Faculty?>> searchFacultyByEmail(String query) async {
     final FirestoreApi firestoreApi = FirestoreApi();
@@ -69,8 +84,6 @@ class SearchService {
     return retval;
   }
 
-
-
   List<Faculty?> searchFacultyByNameSubString(String query) {
     String tempquery;
     tempquery = query.toLowerCase();
@@ -88,8 +101,6 @@ class SearchService {
     return returnList;
   }
 
-
-  
   List<Faculty?> searchFacultyByEmailSubString(String query) {
     String tempquery;
     tempquery = query.toLowerCase();

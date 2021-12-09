@@ -6,9 +6,11 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/app_user.dart';
 import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/app/models/faculty.dart';
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
+import 'package:digitendance/app/notifiers/faculty_search_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
@@ -159,4 +161,11 @@ final sessionListProvider =
             notifier.setSessiononCourseProvider(value);
             return value;
           }));
+});
+
+///[facultySearchProvider] provides searched  [Faculty]
+final facultySearchProvider =
+    StateNotifierProvider<FacultySearchNotifier, List<Faculty?>>((ref) {
+  throw UnimplementedError();
+  // return [Faculty(userId: 'uimplemented error')];
 });

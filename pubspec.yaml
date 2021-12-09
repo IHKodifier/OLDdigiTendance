@@ -42,6 +42,11 @@ dependencies:
   focused_menu: ^1.0.5
   flutter_typeahead: ^3.2.3
   shimmer: ^2.0.0
+  search_choices: ^2.0.14
+  lottie: ^1.2.1
+  syncfusion_flutter_pdf: ^19.3.57-beta
+  # syncfusion_flutter_datepicker: ^19.3.57
+  syncfusion_flutter_signaturepad: ^19.3.57
 
 dev_dependencies:
   flutter_test:

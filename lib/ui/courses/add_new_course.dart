@@ -45,7 +45,7 @@ class _NewCourseBodyState extends ConsumerState<NewCourseBody> {
   TextEditingController courseIdController = TextEditingController();
   TextEditingController courseCreditController = TextEditingController();
   TextEditingController facultyController = TextEditingController();
-  SearchService searchService = SearchService();
+  SearchApi searchService = SearchApi();
 
   _NewCourseBodyState(this.course);
 // @override
