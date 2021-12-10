@@ -15,6 +15,7 @@ import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/states/faculty_search_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
@@ -165,7 +166,7 @@ final sessionListProvider =
 
 ///[facultySearchProvider] provides searched  [Faculty]
 final facultySearchProvider =
-    StateNotifierProvider<FacultySearchNotifier, List<Faculty?>>((ref) {
-  throw UnimplementedError();
+    StateNotifierProvider<FacultySearchNotifier, FacultySearchState>((ref) {
+  return FacultySearchNotifier(FacultySearchState(), ref);
   // return [Faculty(userId: 'uimplemented error')];
 });

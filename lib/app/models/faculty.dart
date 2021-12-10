@@ -19,4 +19,13 @@ class Faculty extends Equatable {
     faculty.photoURL = data['photoURL']??'NA';
     return faculty;
   }
+  @override
+  String toString() {
+    return '''
+    Faculty First Name: $firstName
+    Faculty Last Name: $lastName
+    User ID: $userId
+    phtoURL: $photoURL    
+     ''';
+  }
 }

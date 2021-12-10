@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/faculty.dart';
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/services/search_service.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/states/faculty_search_state.dart';
 import 'package:digitendance/ui/shared/faculty_search_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -133,21 +137,25 @@ class _NewCourseBodyState extends ConsumerState<NewCourseBody> {
 
                 ///[facutyId] Form Field
                 TypeAheadField<Faculty?>(
+                  // minCharsForSuggestions: 3,
                   // controller: facultyController,
-                  suggestionsCallback: (pattern) async {
-                    return await searchService.searchFaculty(pattern);
-                  },
-                  itemBuilder: (context,faculty)=>FacultySearchTile(faculty: faculty!,),
+                  suggestionsCallback: suggestionsCallback,
+                  itemBuilder: (context, faculty) =>
+                      FacultySearchListTile(faculty: faculty!),
+
                   onSuggestionSelected: facultySuggestionSelected,
                   textFieldConfiguration: TextFieldConfiguration(
-            autofocus: true,
-            style: DefaultTextStyle.of(context).style.copyWith(fontSize: 18),
-            textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.book),
-                    hintText: 'Faculty email',
-                    labelText: 'Faculty *',
-                  ),),
+                    autofocus: true,
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(fontSize: 18),
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: const InputDecoration(
+                      icon: Icon(Icons.book),
+                      hintText: 'Faculty email',
+                      labelText: 'Faculty *',
+                    ),
+                  ),
                   // onSaved: (String? value) {
                   //   // This optional block of code can be used to run
                   //   // code when the user saves the form.
@@ -173,8 +181,29 @@ class _NewCourseBodyState extends ConsumerState<NewCourseBody> {
     );
   }
 
+  FutureOr<Iterable<Faculty?>> suggestionsCallback(String query) async {
+    ///capitalize query for easy range selection
+    String capitlizedQuery = '';
+    if (query.isNotEmpty) {
+      for (var i = 0; i < query.length; i++) {
+        if (i == 0) {
+          capitlizedQuery += query[i].toUpperCase();
+        } else {
+          capitlizedQuery += query[i];
+        }
+      }
+    }
+
+    final searchNotfier = ref.watch(facultySearchProvider.notifier);
+
+     searchNotfier.searchFaculty(capitlizedQuery).then((value) =>searchNotfier.state.facultyList);
+
+    return searchNotfier.state.facultyList;
+  }
+
   facultySuggestionSelected(Faculty? faculty) {
     Utilities.log('${faculty.toString()} has been selected from search');
+    // course.
   }
 
   onPressed() {
