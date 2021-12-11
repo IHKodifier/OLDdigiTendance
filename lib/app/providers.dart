@@ -170,3 +170,7 @@ final facultySearchProvider =
   return FacultySearchNotifier(FacultySearchState(), ref);
   // return [Faculty(userId: 'uimplemented error')];
 });
+
+final allCoursesProvider = FutureProvider<List<Course?>>((ref) async {
+  return FirebaseFirestore.instance.collection('courses').get().then((value) => value.docs.map((e) => Course.fromData(e.data())).toList());
+});

@@ -1,5 +1,5 @@
 import 'package:digitendance/app/models/course.dart';
-import 'package:digitendance/ui/courses/prereqs_viewer.dart';
+import 'package:digitendance/ui/courses/view_course/prereqs_viewer.dart';
 import 'package:digitendance/ui/courses/view_course/sessions_viewer_widget.dart';
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,5 @@
 import 'package:digitendance/app/providers.dart';
+import 'package:digitendance/ui/courses/edit_course/prereqs_editor_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,8 +19,12 @@ class PreReqsEditorWidget extends ConsumerWidget {
           // height: 250,
           width: MediaQuery.of(context).size.width * .40,
           child: Card(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
             elevation: 25,
-            color: Theme.of(context).primaryColorDark,
+            // color: Theme.of(context).primaryColorDark,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -32,7 +37,7 @@ class PreReqsEditorWidget extends ConsumerWidget {
                       style: Theme.of(context)
                           .textTheme
                           .headline6!
-                          .copyWith(color: Colors.white),
+                          .copyWith(color: Theme.of(context).primaryColor),
                     ),
                   ),
                   // Divider(),
@@ -43,9 +48,12 @@ class PreReqsEditorWidget extends ConsumerWidget {
                               child: Container(
                                 margin: EdgeInsets.all(4),
                                 child: ListTile(
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(12))),
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                        color: Theme.of(context).primaryColor,
+                                        width: 1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   tileColor: Colors.white,
                                   title: Text(
                                     e.data()['courseId'],
@@ -65,7 +73,17 @@ class PreReqsEditorWidget extends ConsumerWidget {
                         .toList(),
                   ),
 
-                  // Li
+                  FloatingActionButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(title: Text('Select course prerequisites'),
+                          scrollable: true,
+                          content:PreReqsEditorDialog(),
+                          ));
+                    },
+                    child: Icon(Icons.edit),
+                  ),
                 ],
               ),
             ),

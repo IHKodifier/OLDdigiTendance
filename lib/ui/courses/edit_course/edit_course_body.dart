@@ -1,4 +1,6 @@
 import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/ui/courses/edit_course/prereqs_editor.dart';
+import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -108,30 +110,21 @@ class _EditCourseBodyState extends ConsumerState<EditCourseBody> {
                 ),
 
                 ///[facutyId] Form Field
-                TextFormField(
-                  controller: facultyController,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.book),
-                    hintText: 'Faculty email',
-                    labelText: 'Faculty *',
-                  ),
-                  onSaved: (String? value) {
-                    // This optional block of code can be used to run
-                    // code when the user saves the form.
-                  },
-                  validator: (String? value) {
-                    return (value != null && value.contains('@'))
-                        ? 'Do not use the @ char.'
-                        : null;
-                  },
-                ),
+
                 SizedBox(
                   height: 20,
                 ),
+                PreReqsEditorWidget(),
+                SessionsEditorWidget(),
+
+                Divider(),
+                SizedBox(height: 10),
+
                 ElevatedButton.icon(
                     onPressed: onPressed,
                     icon: const Icon(Icons.save),
                     label: const Text('Save')),
+                SizedBox(height: 10),
               ],
             ),
           ),

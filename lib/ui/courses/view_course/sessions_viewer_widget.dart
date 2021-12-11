@@ -52,7 +52,7 @@ class SessionsViewerWidget extends ConsumerWidget {
                     .copyWith(color: Theme.of(context).primaryColor),
               ),
               Container(
-                height: 220,
+                // height: 220,
                 width: MediaQuery.of(context).size.width * .40,
                 child: Wrap(
                   children: _providedSessionList!
@@ -87,6 +87,7 @@ class SessionsViewerWidget extends ConsumerWidget {
                       .toList(),
                 ),
               ),
+              SizedBox(height: 15,),
             ],
           ),
         );

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/session.dart';
-import 'package:digitendance/ui/courses/edit_course.dart';
+import 'package:digitendance/ui/courses/edit_course/edit_course.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/ui/courses/prereqs_viewer.dart';
+import 'package:digitendance/ui/courses/view_course/prereqs_viewer.dart';
 import 'package:digitendance/ui/courses/view_course/sessions_viewer_widget.dart';
 import 'package:digitendance/ui/courses/view_course/course_body.dart';
 import 'package:flutter/material.dart';

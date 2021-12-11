@@ -4,8 +4,8 @@ import 'package:digitendance/app/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SessionEditorWidget extends ConsumerWidget {
-   SessionEditorWidget({Key? key}) : super(key: key);
+class SessionsEditorWidget extends ConsumerWidget {
+   SessionsEditorWidget({Key? key}) : super(key: key);
 
    late List<Session?>? _providedSessionList;
 
