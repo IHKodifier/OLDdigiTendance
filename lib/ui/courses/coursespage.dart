@@ -6,8 +6,8 @@ import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/ui/courses/edit_course.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/ui/courses/add_new_course.dart';
-import 'package:digitendance/ui/courses/course_detail_page.dart';
+import 'package:digitendance/ui/courses/new_course.dart/add_new_course.dart';
+import 'package:digitendance/ui/courses/view_course/course_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

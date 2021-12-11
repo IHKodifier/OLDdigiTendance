@@ -1,0 +1,54 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/app/models/session.dart';
+import 'package:digitendance/ui/courses/edit_course.dart';
+import 'package:digitendance/app/providers.dart';
+import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/prereqs_viewer.dart';
+import 'package:digitendance/ui/courses/view_course/sessions_viewer_widget.dart';
+import 'package:digitendance/ui/courses/view_course/course_body.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class CourseDetailPage extends ConsumerWidget {
+  const CourseDetailPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Course course = ref.watch(courseProvider);
+    final notifier = ref.watch(courseProvider.notifier);
+    String appBarTitle = course.courseId ?? 'New Course';
+    // course.courseId = 'new course';
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appBarTitle),
+        centerTitle: true,
+      ),
+      body: CourseDetailBody(
+        course: course,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Utilities.log(''' 
+          Navigating to Edit course Route 
+          course state equals 
+          ${course.toString()}          
+          ''');
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const EditCourse()));
+        },
+        icon: Icon(Icons.edit),
+        label: Text(
+          'Edit Course',
+          style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                color: Colors.white,
+                // fontFamily: Goog¿,
+                fontSize: 22,
+              ),
+        ),
+      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}

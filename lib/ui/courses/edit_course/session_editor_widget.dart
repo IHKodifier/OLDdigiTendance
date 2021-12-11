@@ -4,9 +4,10 @@ import 'package:digitendance/app/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SessionsViewerWidget extends ConsumerWidget {
-  SessionsViewerWidget({Key? key}) : super(key: key);
-  late List<Session?>? _providedSessionList;
+class SessionEditorWidget extends ConsumerWidget {
+   SessionEditorWidget({Key? key}) : super(key: key);
+
+   late List<Session?>? _providedSessionList;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,6 +35,10 @@ class SessionsViewerWidget extends ConsumerWidget {
 
         return Card(
           margin: EdgeInsets.all(8),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
           elevation: 5,
           child: Column(
             children: [
@@ -52,22 +57,32 @@ class SessionsViewerWidget extends ConsumerWidget {
                 width: MediaQuery.of(context).size.width * .40,
                 child: Wrap(
                   children: _providedSessionList!
-                      .map((e) => Container(
-                            width: 150,
-                            height: 92,
-                            margin: EdgeInsets.all(8),
-                            child: ListTile(
-                              tileColor: Theme.of(context).primaryColor,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12))),
-                              title: Text(
-                                e!.sessionId,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              subtitle: Text(
-                                e.sessionTitle,
-                                style: TextStyle(color: Colors.white),
+                      .map((e) => Card(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              width: 150,
+                              height: 92,
+                              margin: EdgeInsets.all(8),
+                              child: ListTile(
+                                // tileColor: Theme.of(context).primaryColor,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12))),
+                                title: Text(
+                                  e!.sessionId,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                ),
+                                subtitle: Text(
+                                  e.sessionTitle,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                ),
                               ),
                             ),
                           ))

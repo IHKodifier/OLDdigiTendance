@@ -1,4 +1,5 @@
-// ignore: file_names
+// ignore_for_file: file_names
+
 import 'package:digitendance/app/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +21,11 @@ class PreReqsViewerWidget extends ConsumerWidget {
           width: MediaQuery.of(context).size.width * .40,
           child: Card(
             elevation: 25,
-            color: Theme.of(context).primaryColorDark,
+            // color: Theme.of(context).primaryColorDark,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -33,7 +38,7 @@ class PreReqsViewerWidget extends ConsumerWidget {
                       style: Theme.of(context)
                           .textTheme
                           .headline6!
-                          .copyWith(color: Colors.white),
+                          .copyWith(color: Theme.of(context).primaryColor),
                     ),
                   ),
                   // Divider(),
@@ -44,9 +49,12 @@ class PreReqsViewerWidget extends ConsumerWidget {
                               child: Container(
                                 margin: EdgeInsets.all(4),
                                 child: ListTile(
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(12))),
+                                 shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                        color: Theme.of(context).primaryColor,
+                                        width: 1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   tileColor: Colors.white,
                                   title: Text(
                                     e.data()['courseId'],
