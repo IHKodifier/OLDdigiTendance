@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
-import 'package:digitendance/app/notifiers/edit_course.dart';
+import 'package:digitendance/ui/courses/edit_course.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/ui/courses/add_new_course.dart';
@@ -39,8 +39,8 @@ class CoursesPage extends ConsumerWidget {
           size: 40,
         ),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
+      // floatingActionButtonLocation:
+          // FloatingActionButtonLocation.miniCenterFloat,
     );
   }
 
