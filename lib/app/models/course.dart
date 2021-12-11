@@ -34,7 +34,7 @@ class Course {
     Credits ${credits.toString()}
 
     number of preReqs: ${preReqs!.length}
-    ${preReqs!.map((e) => e.courseId.toString())}
+    ${preReqs!.map((e) => e.toString())}
 
    number of Sessions: ${sessions!.length}
 ${sessions!.map((e) => e.toString())}

@@ -14,12 +14,12 @@ class CourseDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Course course = ref.watch(courseProvider);
     final notifier = ref.watch(courseProvider.notifier);
-    String courseTitle = course.courseId ?? 'New Course';
+    String appBarTitle = course.courseId ?? 'New Course';
     // course.courseId = 'new course';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(courseTitle),
+        title: Text(appBarTitle),
         centerTitle: true,
       ),
       body: _CourseDetailBody(
@@ -27,6 +27,11 @@ class CourseDetailPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          Utilities.log(''' 
+          Navigating to Edit course Route 
+          course state equals 
+          ${course.toString()}          
+          ''');
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => const EditCourse()));
         },
@@ -52,44 +57,50 @@ class _CourseDetailBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Card(
-                // margin: EdgeInsets.all(8),
-                elevation: 5,
-                child: Padding(
+      child: Card(
+        elevation: 25,
+        child: Container(
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+          width: MediaQuery.of(context).size.width * .5,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Column(
                     children: [
                       Text(
                         course.courseTitle!,
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headline3!.copyWith(
+                            color: Theme.of(context).primaryColorDark),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       Text(
                         '${course.credits!} credits',
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            color: Theme.of(context).primaryColorDark,
+                            fontSize: 16),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: 25,
+                      ),
+                      Divider(
+                        thickness: 1,
                       ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              PreReqsList(),
-              SessionsListWidget(),
-            ],
+                SizedBox(
+                  height: 25,
+                ),
+                PreReqsViewerWidget(),
+                SessionsListWidget(),
+              ],
+            ),
           ),
         ),
       ),
@@ -97,8 +108,8 @@ class _CourseDetailBody extends StatelessWidget {
   }
 }
 
-class PreReqsList extends ConsumerWidget {
-  const PreReqsList({Key? key}) : super(key: key);
+class PreReqsViewerWidget extends ConsumerWidget {
+  const PreReqsViewerWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -113,7 +124,8 @@ class PreReqsList extends ConsumerWidget {
           // height: 250,
           width: MediaQuery.of(context).size.width * .40,
           child: Card(
-            elevation: 5,
+            elevation: 25,
+            color: Theme.of(context).primaryColorDark,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -123,35 +135,61 @@ class PreReqsList extends ConsumerWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
                       'Course Pre Requisites',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6!
+                          .copyWith(color: Colors.white),
                     ),
                   ),
-                  Divider(),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: data.docs.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.all(4),
-                        child: Material(
-                          // color: Colors.blueAccent,
-                          elevation: 15,
-                          child: ListTile(
-                            title: Text(
-                              data.docs[index].data()['courseId'],
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2!
-                                  .copyWith(
-                                      color: Theme.of(context).primaryColor,
-                                      fontSize: 18),
-                            ),
-                            // subtitle: Text(data.docs[index].data()['courseTitle']),
-                          ),
-                        ),
-                      );
-                    },
+                  // Divider(),
+                  Wrap(
+                    children: data.docs
+                        .map((e) => Container(
+                              width: 200,
+                              child: Container(
+                                margin: EdgeInsets.all(4),
+                                child: ListTile(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12))),
+                                  tileColor: Colors.white,
+                                  title: Text(e.data()['courseId'],
+                                  style: Theme.of(context).textTheme.bodyText2!.copyWith(color: Theme.of(context).primaryColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                                  ),
+                                  subtitle: Text(e.data()['courseTitle']),
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
+
+                  // ListView.builder(
+                  //   shrinkWrap: true,
+                  //   itemCount: data.docs.length,
+                  //   itemBuilder: (context, index) {
+                  //     return Container(
+                  //       margin: EdgeInsets.all(4),
+                  //       child: Material(
+                  //         // color: Colors.blueAccent,
+                  //         elevation: 15,
+                  //         child: ListTile(
+                  //           title: Text(
+                  //             data.docs[index].data()['courseId'],
+                  //             style: Theme.of(context)
+                  //                 .textTheme
+                  //                 .bodyText2!
+                  //                 .copyWith(
+                  //                     color: Theme.of(context).primaryColor,
+                  //                     fontSize: 18),
+                  //           ),
+                  //           // subtitle: Text(data.docs[index].data()['courseTitle']),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),
