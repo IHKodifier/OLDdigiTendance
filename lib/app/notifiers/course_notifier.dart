@@ -24,8 +24,18 @@ class CourseNotifier extends StateNotifier<Course> {
       state.sessions!.add(Session.fromData(element.data()));
 
       Utilities.log(
-          'ADDED  ${element.data()['sessionId']+element.data()['faculty']} to selected Course\'s SESSIONS ');
+          'ADDED  ${element.data()['sessionId'] + element.data()['faculty']} to selected Course\'s SESSIONS ');
     });
   }
+
+  void removePreReq(Course courseElement) {
+    final newState = state.copyWith();
+    if (newState.preReqs!.isNotEmpty) {
+      if (newState.preReqs!.contains(courseElement)) {
+        newState.preReqs!.remove(courseElement);
+      }
+      state = newState;
+    }
+  }
 }
-/// just another commit to come out pf remote push cancelled syndrome
+/// just another commit to come out pf remote push cancelled syndro

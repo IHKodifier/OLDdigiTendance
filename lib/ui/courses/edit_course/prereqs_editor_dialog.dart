@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PreReqsEditorDialog extends ConsumerWidget {
-   PreReqsEditorDialog({Key? key}) : super(key: key);
+  var  previousState;
+  PreReqsEditorDialog({Key? key}) : super(key: key);
   // AsyncValue<Course> coursesMap;
-  List<Course?>? allCourses=[];
+  List<Course?>? allCourses = [];
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    previousState = ref.watch(courseProvider);
     allCourses = ref.watch(allCoursesProvider).asData!.value;
     return Container(
       height: MediaQuery.of(context).size.height * .8,
@@ -16,16 +18,16 @@ class PreReqsEditorDialog extends ConsumerWidget {
       child: Column(
         children: [
           // Text('PreReqs Editor Dialog'),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Text('Tap on a course to add/remove'),
           ),
 
           Container(
-              decoration: BoxDecoration(
-                
-                border: Border.all(width: 3,color: Theme.of(context).primaryColor)),
-            child: Flexible(
+            decoration: BoxDecoration(
+                border: Border.all(
+                    width: 3, color: Theme.of(context).primaryColor)),
+            child: Expanded(
               child: Wrap(
                 children: ref
                     .watch(courseProvider)
@@ -41,20 +43,28 @@ class PreReqsEditorDialog extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             title: Text(e.courseId!),
+                            onTap: () {
+                              final notifier =
+                                  ref.watch(courseProvider.notifier);
+                              notifier.removePreReq(e);
+                            },
                           ),
                         ))
                     .toList(),
               ),
             ),
           ),
-         SizedBox(height: 25,),
-         Text('available courses'),
+          SizedBox(
+            height: 25,
+          ),
+          Text('available courses'),
           Container(
             decoration: BoxDecoration(
-              // color: Theme.of(context).primaryColor,
-              border: Border.all(width: 3,color: Theme.of(context).primaryColor)),
+                // color: Theme.of(context).primaryColor,
+                border: Border.all(
+                    width: 3, color: Theme.of(context).primaryColor)),
             // color: Colors.orange.shade200,
-            child: Flexible(
+            child: Expanded(
               child: Wrap(
                 children: allCourses!
                     .map((e) => Container(

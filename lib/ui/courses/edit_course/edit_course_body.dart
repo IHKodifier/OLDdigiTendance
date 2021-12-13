@@ -1,4 +1,5 @@
 import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/ui/courses/edit_course/prereqs_editor.dart';
 import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditCourseBody extends ConsumerStatefulWidget {
   final course;
-
   EditCourseBody(this.course);
+  
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _EditCourseBodyState(course);
@@ -18,14 +19,13 @@ class _EditCourseBodyState extends ConsumerState<EditCourseBody> {
   TextEditingController courseIdController = TextEditingController();
   TextEditingController courseCreditController = TextEditingController();
   TextEditingController facultyController = TextEditingController();
-
   _EditCourseBodyState(this.course);
-  // final bool isEditMode;
   @override
   // TODO: implement ref
   WidgetRef get ref => super.ref;
 
-  final Course course;
+  late  Course course,previousState; 
+
 
   @override
   void initState() {
@@ -34,12 +34,15 @@ class _EditCourseBodyState extends ConsumerState<EditCourseBody> {
     courseIdController.text = course.courseId!;
     courseCreditController.text =
         course!.credits == 0 ? '' : course.credits.toString();
+     
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     var _formKey = GlobalKey<_EditCourseBodyState>();
+    
 
     return Center(
       child: Container(

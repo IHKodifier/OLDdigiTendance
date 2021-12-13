@@ -1,7 +1,8 @@
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:equatable/equatable.dart';
 
-class Course {
+class Course extends Equatable {
   String? courseId;
   String? courseTitle;
   int? credits;
@@ -13,7 +14,7 @@ class Course {
     this.courseTitle,
     this.credits,
     // ignore: avoid_init_to_null
-    this.preReqs = null,
+    this.preReqs = null, List<Session?>? sessions,
   });
   Course.fromData(Map<String, dynamic> data) {
     courseId = data['courseId'];
@@ -28,28 +29,43 @@ class Course {
   @override
   String toString() {
     return ''' 
-    Printing Course 
-    courseId: $courseId
-    courseTitle: $courseTitle
-    Credits ${credits.toString()}
-
-    number of preReqs: ${preReqs!.length}
+    Printing Course====courseId: $courseId, courseTitle: $courseTitle
+    Credits ${credits.toString()}, number of preReqs: ${preReqs!.length}
     ${preReqs!.map((e) => e.toString())}
 
-   number of Sessions: ${sessions!.length}
-${sessions!.map((e) => e.toString())}
+   number of Sessions: ${sessions!.length} ${sessions!.map((e) => e.toString())}
     )
     ''';
   }
 
   Map<String, dynamic> toMap() {
     var _map = {
- 'courseId': courseId,
-  'courseTitle': courseTitle,
- 'credits': credits ,
+      'courseId': courseId,
+      'courseTitle': courseTitle,
+      'credits': credits,
 //   preReqs = [];
 //  sessions = [];
     };
     return _map;
+  }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [courseId, courseTitle, preReqs, sessions];
+
+  Course copyWith(
+      {String? courseId,
+      String? courseTitle,
+      int? credits,
+      List<Course>? preReqs,
+      List<Session>? sessions}) {
+    return Course(
+      courseId: courseId?? this.courseId,
+      courseTitle: courseTitle?? this.courseTitle,
+      credits: credits?? this.credits,
+      preReqs: preReqs ?? this.preReqs,
+      sessions: sessions?? this.sessions
+
+    );
   }
 }

@@ -8,7 +8,7 @@ class PreReqsEditorWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stream = ref.watch(preReqsProvider);
+    final stream = ref.read(preReqsProvider);
 
     return stream.when(
       error: (e, st, data) => Center(child: Text('error encountered \n $e')),
@@ -77,12 +77,28 @@ class PreReqsEditorWidget extends ConsumerWidget {
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (context) => AlertDialog(title: Text('Select course prerequisites'),
-                          scrollable: true,
-                          content:PreReqsEditorDialog(),
-                          ));
+                          builder: (context) => AlertDialog(
+                                title: Text('Select course prerequisites'),
+                                scrollable: true,
+                                content: PreReqsEditorDialog(),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Cancel')),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'DONE',
+                                      )),
+                                ],
+                              ));
                     },
-                    child: Icon(Icons.edit),
+                    child: const Icon(Icons.edit,size: 35,),
                   ),
                 ],
               ),

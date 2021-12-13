@@ -11,7 +11,9 @@ class EditCourse extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.watch(courseProvider.notifier);
-    final state = notifier.state;
+    final state = ref.watch(courseProvider);
+    final oldState = state;
+    
 
     return Scaffold(
       appBar: AppBar(
