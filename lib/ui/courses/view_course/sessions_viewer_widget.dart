@@ -30,7 +30,7 @@ class SessionsViewerWidget extends ConsumerWidget {
   Widget onData(data) {
     return Consumer(
       builder: (context, ref, child) {
-        _providedSessionList = ref.watch(courseProvider).sessions;
+        _providedSessionList = ref.watch(currentCourseProvider).sessions;
 
         return Card(
           margin: EdgeInsets.all(8),

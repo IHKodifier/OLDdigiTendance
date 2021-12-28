@@ -11,11 +11,13 @@ import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/notifiers/faculty_search_notifier.dart';
+import 'package:digitendance/app/notifiers/prereqs_selection_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/faculty_search_state.dart';
+import 'package:digitendance/states/prereqs_selection_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
@@ -43,12 +45,7 @@ final firestoreProvider = Provider<FirebaseFirestore>(
 );
 
 ///
-///
-///
-///
-///
-///
-///                                    SERVICE PROVIDERS
+///                                    API PROVIDERS
 ///shall provide the[AuthApi] instance
 final authApiProvider = Provider<AuthApi>(
   (ref) => AuthApi(
@@ -60,10 +57,6 @@ final authApiProvider = Provider<AuthApi>(
 /// shall provide the [FirestoreApi] instance
 final firestoreApiProvider = Provider<FirestoreApi>((ref) => FirestoreApi());
 
-///
-///
-///
-///
 ///
 ///                                      STATE PROVIDERS
 ///listens to [AuthStatechanges]  on [FirebaseAuth] instance and yields a firebase [User] or [null] when the auth state changes
@@ -125,15 +118,15 @@ var colorsList = [
   Colors.amberAccent
 ];
 
-///[courseProvider] provides inatance of [Course] managedg by [CourseNotifier]
-final courseProvider = StateNotifierProvider<CourseNotifier, Course>((ref) {
+///[currentCourseProvider] provides inatance of currently selected [Course] managedg by [CourseNotifier]
+final currentCourseProvider =
+    StateNotifierProvider<CourseNotifier, Course>((ref) {
   return CourseNotifier(Course(), ref);
 });
 
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
-final preReqsProvider =
-    FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
-  final course = ref.watch(courseProvider);
+final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
+  final course = ref.watch(currentCourseProvider);
   return ref
       .read(firestoreProvider)
       .collection('courses')
@@ -141,16 +134,24 @@ final preReqsProvider =
       .get()
       .then((value) =>
           value.docs[0].reference.collection('preReqs').get().then((value) {
-            final notifier = ref.read(courseProvider.notifier);
-            notifier.setPreReqsonCourse(value);
-            return value;
+            final currentCourse = ref.read(currentCourseProvider);
+            currentCourse.preReqs = value.docs.map((e) {
+              Utilities.log(
+                  '${e.data()['courseId']} HAS BEEN ADDED TO CUURENTCOURSE PROVIDER');
+
+              return Course.fromData(e.data());
+            }).toList();
+
+            return value.docs.map((e) => Course.fromData(e.data())).toList();
+
+            //
           }));
 });
 
 /// [sessionListProvider] provides all the session for a [Course]
 final sessionListProvider =
     FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
-  final Course course = ref.watch(courseProvider);
+  final Course course = ref.watch(currentCourseProvider);
   return ref
       .watch(firestoreProvider)
       .collection('courses')
@@ -158,7 +159,7 @@ final sessionListProvider =
       .get()
       .then((value) =>
           value.docs[0].reference.collection('sessions').get().then((value) {
-            final notifier = ref.read(courseProvider.notifier);
+            final notifier = ref.read(currentCourseProvider.notifier);
             notifier.setSessiononCourseProvider(value);
             return value;
           }));
@@ -171,6 +172,14 @@ final facultySearchProvider =
   // return [Faculty(userId: 'uimplemented error')];
 });
 
-final allCoursesProvider = FutureProvider<List<Course?>>((ref) async {
-  return FirebaseFirestore.instance.collection('courses').get().then((value) => value.docs.map((e) => Course.fromData(e.data())).toList());
+final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
+  ref.listen(currentCourseProvider, (course) { });
+  return FirebaseFirestore.instance.collection('courses').get().then(
+      (value) => value.docs.map((e) => Course.fromData(e.data())).toList());
+});
+
+final preReqsSelectionProvider =
+    StateNotifierProvider<PreReqsSelectionNotifier, AsyncValue<PreReqsSelectionState>>(
+        (ref) {
+  return PreReqsSelectionNotifier(ref );
 });

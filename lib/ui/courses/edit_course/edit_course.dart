@@ -10,8 +10,8 @@ class EditCourse extends ConsumerWidget {
   const EditCourse({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.watch(courseProvider.notifier);
-    final state = ref.watch(courseProvider);
+    final notifier = ref.watch(currentCourseProvider.notifier);
+    final state = ref.watch(currentCourseProvider);
     final oldState = state;
     
 

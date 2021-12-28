@@ -11,12 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CourseDetailPage extends ConsumerWidget {
-  const CourseDetailPage({Key? key}) : super(key: key);
+  CourseDetailPage({Key? key}) : super(key: key);
+  bool editEnabled = false;
+  late BuildContext localContext;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Course course = ref.watch(courseProvider);
-    final notifier = ref.watch(courseProvider.notifier);
+    localContext = context;
+    final Course course = ref.watch(currentCourseProvider);
+    final notifier = ref.watch(currentCourseProvider.notifier);
     String appBarTitle = course.courseId ?? 'New Course';
     // course.courseId = 'new course';
 
@@ -29,15 +32,7 @@ class CourseDetailPage extends ConsumerWidget {
         course: course,
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Utilities.log(''' 
-          Navigating to Edit course Route 
-          course state equals 
-          ${course.toString()}          
-          ''');
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const EditCourse()));
-        },
+        onPressed: onPressed,
         icon: Icon(Icons.edit),
         label: Text(
           'Edit Course',
@@ -50,5 +45,15 @@ class CourseDetailPage extends ConsumerWidget {
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  onPressed() {
+    // Utilities.log('''
+    //       Navigating to Edit course Route
+    //       course state equals
+    //       ${course.toString()}
+    //       ''');
+    Navigator.of(localContext)
+        .push(MaterialPageRoute(builder: (_) => const EditCourse()));
   }
 }

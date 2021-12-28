@@ -43,7 +43,7 @@ class PreReqsViewerWidget extends ConsumerWidget {
                   ),
                   // Divider(),
                   Wrap(
-                    children: data.docs
+                    children: data
                         .map((e) => Container(
                               width: 200,
                               child: Container(
@@ -57,7 +57,7 @@ class PreReqsViewerWidget extends ConsumerWidget {
                                   ),
                                   tileColor: Colors.white,
                                   title: Text(
-                                    e.data()['courseId'],
+                                    e!.courseId!,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText2!
@@ -67,7 +67,7 @@ class PreReqsViewerWidget extends ConsumerWidget {
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600),
                                   ),
-                                  subtitle: Text(e.data()['courseTitle']),
+                                  subtitle: Text(e.courseTitle!),
                                 ),
                               ),
                             ))

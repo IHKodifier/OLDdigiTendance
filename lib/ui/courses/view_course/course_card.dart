@@ -15,7 +15,7 @@ class CourseCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    this.notifier = ref.watch(courseProvider.notifier);
+    this.notifier = ref.watch(currentCourseProvider.notifier);
 
     int i = Random().nextInt(ref.read(colorPalleteProvider).length);
 
@@ -74,6 +74,6 @@ class CourseCard extends ConsumerWidget {
     notifier.state = course;
     // notifier.state.preReqs=
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => const CourseDetailPage()));
+        .push(MaterialPageRoute(builder: (_) =>  CourseDetailPage()));
   }
 }

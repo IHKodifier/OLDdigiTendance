@@ -12,7 +12,7 @@ class FacultySearchNotifier extends StateNotifier<FacultySearchState> {
   final ProviderRefBase ref;
 
   Future<void> searchFaculty(String queryString) async {
-    final course = ref.watch(courseProvider);
+    final course = ref.watch(currentCourseProvider);
     switch (queryString.length) {
       case 0:
         state.clear();

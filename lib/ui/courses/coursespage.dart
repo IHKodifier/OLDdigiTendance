@@ -29,7 +29,7 @@ class CoursesPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          final courseNotifier = ref.watch(courseProvider.notifier);
+          final courseNotifier = ref.watch(currentCourseProvider.notifier);
           navigateToAddCourse(context);
         },
         label: const Text('New Course'),
