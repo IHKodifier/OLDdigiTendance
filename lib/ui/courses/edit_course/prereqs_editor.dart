@@ -91,6 +91,7 @@ class PreReqsEditorWidget extends ConsumerWidget {
                                   ElevatedButton(
                                       onPressed: () {
                                         Navigator.pop(context);
+                                        //TODO restore previous state
                                       },
                                       child: Text(
                                         'DONE',

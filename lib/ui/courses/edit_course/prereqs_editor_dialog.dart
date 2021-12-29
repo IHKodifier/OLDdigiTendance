@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PreReqsEditorDialog extends ConsumerStatefulWidget {
+  Course? originalState;
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _PreReqsEditorDialogState();
@@ -18,7 +20,12 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
   List<Course>? selectedCourses;
   List<Course?> availableCourses = [];
   AsyncValue? asyncData;
-  Course? currentCourse;
+  Course? originalState;
+  @override
+  void initState() {
+    super.initState();
+    widget.originalState = this.originalState;
+  }
 
   @override
   void dispose() {
@@ -43,9 +50,9 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
   }
 
   Widget onData(dynamic data) {
+    originalState = ref.read(currentCourseProvider);
     allCourses = data;
     selectedCourses = ref.read(currentCourseProvider).preReqs;
-
     availableCourses.clear();
     Utilities.log('cleared available courses');
     allCourses!.forEach((element) {
@@ -55,6 +62,8 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
       }
     });
 //build selectedand available lists
+
+
 
     return Container(
       height: MediaQuery.of(context).size.height * .8,

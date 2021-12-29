@@ -34,8 +34,6 @@ class _EditCourseBodyState extends ConsumerState<EditCourseBody> {
     courseIdController.text = course.courseId!;
     courseCreditController.text =
         course!.credits == 0 ? '' : course.credits.toString();
-     
-
     super.initState();
   }
 
