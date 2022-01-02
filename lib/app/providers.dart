@@ -11,12 +11,14 @@ import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/notifiers/faculty_search_notifier.dart';
+import 'package:digitendance/app/notifiers/institution_notifier.dart';
 import 'package:digitendance/app/notifiers/prereqs_selection_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/faculty_search_state.dart';
+import 'package:digitendance/states/institution_state.dart';
 import 'package:digitendance/states/prereqs_selection_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -73,13 +75,14 @@ final currentAuthUserProvider =
     FutureProvider<User?>((ref) => FirebaseAuth.instance.currentUser);
 
 ///fetches the [AppUser] for the currently signed
-
 final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
   final User? authUser = ref.read(authInstanceProvider).currentUser;
   final FirestoreApi firestoreApi = ref.read(firestoreApiProvider);
   if (authUser != null) {
-    var data = await firestoreApi.getAppUserDoc(userId: authUser.email!);
-    AppUser _appUser = AppUser.fromJson(data!, data['email']);
+    var data =
+        await firestoreApi.getAppUserDoc(userId: authUser.email!, refBase: ref);
+    AppUser _appUser =
+        AppUser.fromJson(data.docs[0].data()!, data.docs[0].data()['email']);
     return _appUser;
   }
 });
@@ -88,7 +91,13 @@ final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
 
 final coursesStreamProvider =
     StreamProvider<QuerySnapshot<Map<String, dynamic>>>((ref) {
-  return ref.watch(firestoreProvider).collection('courses').snapshots();
+  var instituionId = ref.read(InstitutionProvider).docRef;
+
+  return ref
+      .watch(firestoreProvider)
+      .doc(instituionId.path)
+      .collection('courses')
+      .snapshots();
 });
 
 // ignore: deprecated_member_use
@@ -126,9 +135,11 @@ final currentCourseProvider =
 
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
 final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
+  var institutiondocRef = ref.read(InstitutionProvider).docRef;
   final course = ref.watch(currentCourseProvider);
   return ref
       .read(firestoreProvider)
+      .doc(institutiondocRef.path)
       .collection('courses')
       .where('courseId', isEqualTo: course.courseId)
       .get()
@@ -136,7 +147,7 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
           value.docs[0].reference.collection('preReqs').get().then((value) {
             final currentCourse = ref.read(currentCourseProvider);
             currentCourse.preReqs = value.docs.map((e) {
-              Utilities.log(
+              Utils.log(
                   '${e.data()['courseId']} HAS BEEN ADDED TO CUURENTCOURSE PROVIDER');
 
               return Course.fromData(e.data());
@@ -151,9 +162,11 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
 /// [sessionListProvider] provides all the session for a [Course]
 final sessionListProvider =
     FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
+  final docRef = ref.read(InstitutionProvider).docRef;
   final Course course = ref.watch(currentCourseProvider);
   return ref
       .watch(firestoreProvider)
+      .doc(docRef.path)
       .collection('courses')
       .where('courseId', isEqualTo: course.courseId)
       .get()
@@ -165,6 +178,18 @@ final sessionListProvider =
           }));
 });
 
+// /// [instotutionDocRefProvider] will provide the [DocumentReference] for the institution
+// /// to which the logged in user belongs
+// final instotutionDocRefProvider = Provider<DocumentReference>((ref) {
+//   // return;
+// });
+
+///[InstitutionProvider] will provide the state of [Instituion] and will be managed by [InstitutionNotifier]
+final InstitutionProvider =
+    StateNotifierProvider<InstitutionNotifier, Institution>((ref) {
+  return InstitutionNotifier(Institution(), ref);
+});
+
 ///[facultySearchProvider] provides searched  [Faculty]
 final facultySearchProvider =
     StateNotifierProvider<FacultySearchNotifier, FacultySearchState>((ref) {
@@ -173,13 +198,17 @@ final facultySearchProvider =
 });
 
 final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
-  ref.listen(currentCourseProvider, (course) { });
-  return FirebaseFirestore.instance.collection('courses').get().then(
-      (value) => value.docs.map((e) => Course.fromData(e.data())).toList());
+  var docRef = ref.read(InstitutionProvider).docRef;
+  ref.listen(currentCourseProvider, (course) {});
+  return FirebaseFirestore.instance
+      .doc(docRef.path)
+      .collection('courses')
+      .get()
+      .then(
+          (value) => value.docs.map((e) => Course.fromData(e.data())).toList());
 });
 
-final preReqsSelectionProvider =
-    StateNotifierProvider<PreReqsSelectionNotifier, AsyncValue<PreReqsSelectionState>>(
-        (ref) {
-  return PreReqsSelectionNotifier(ref );
+final preReqsSelectionProvider = StateNotifierProvider<PreReqsSelectionNotifier,
+    AsyncValue<PreReqsSelectionState>>((ref) {
+  return PreReqsSelectionNotifier(ref);
 });

@@ -21,7 +21,7 @@ class CourseCard extends ConsumerWidget {
 
     final bkColor = ref.read(colorPalleteProvider)[i];
     // final bkColor = Colors[i];
-    Utilities.log('pallete index i = ${i.toString()}');
+    Utils.log('pallete index i = ${i.toString()}');
     return InkWell(
       onTap: () {
         _setCourseInStateProvider(context);

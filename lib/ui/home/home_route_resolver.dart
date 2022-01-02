@@ -15,7 +15,7 @@ class HomeRouteResolver extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(authStateProvider);
     final selectedRole = state.selectedRole;
-    Utilities.log(
+    Utils.log(
         'selectedRole equals \n ${selectedRole!.roleName} \n at time of HomeRouteResolver');
     return Scaffold(
       appBar: AppBar(

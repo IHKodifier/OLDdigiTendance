@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PreReqsEditorWidget extends ConsumerWidget {
-  const PreReqsEditorWidget({Key? key}) : super(key: key);
+  late var state;
+  PreReqsEditorWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,29 +47,25 @@ class PreReqsEditorWidget extends ConsumerWidget {
                     children: data
                         .map((e) => Container(
                               width: 200,
-                              child: Container(
-                                margin: EdgeInsets.all(4),
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 1),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  tileColor: Colors.white,
-                                  title: Text(
-                                    e!.courseId!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .copyWith(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                  ),
-                                  subtitle: Text(e.courseTitle!),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                      color: Theme.of(context).primaryColor,
+                                      width: 1),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                                tileColor: Colors.white,
+                                title: Text(
+                                  e!.courseId!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2!
+                                      .copyWith(
+                                          color: Theme.of(context).primaryColor,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: Text(e.courseTitle!),
                               ),
                             ))
                         .toList(),
@@ -86,6 +83,7 @@ class PreReqsEditorWidget extends ConsumerWidget {
                                   TextButton(
                                       onPressed: () {
                                         Navigator.pop(context);
+                                        
                                       },
                                       child: Text('Cancel')),
                                   ElevatedButton(
@@ -97,7 +95,7 @@ class PreReqsEditorWidget extends ConsumerWidget {
                                         'DONE',
                                       )),
                                 ],
-                              ));
+                              )).then((value) => state = value);
                     },
                     child: const Icon(
                       Icons.edit,

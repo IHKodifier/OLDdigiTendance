@@ -27,7 +27,7 @@ class AppUser extends Equatable {
 
     _handleUserRoles(data);
     // additionalAppUserInfo!.photoUrl = data['photoURL'];
-    Utilities.log('printing AppUser.fromJson\n${this.toString()}');
+    Utils.log('printing AppUser.fromJson\n${this.toString()}');
   }
 
   AppUser.fromFirebaseUser(User user) {
@@ -35,7 +35,7 @@ class AppUser extends Equatable {
     this.additionalAppUserInfo!.disPlayName = user.displayName;
     this.additionalAppUserInfo!.email = user.email;
     this.additionalAppUserInfo!.photoUrl = user.photoURL;
-    Utilities.log('printing AppUser.fromFirebaseUser\n${this.toString()}');
+    Utils.log('printing AppUser.fromFirebaseUser\n${this.toString()}');
   }
 
   _handleUserRoles(Map<String, dynamic>? data) {

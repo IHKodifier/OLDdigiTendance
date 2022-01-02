@@ -46,7 +46,7 @@ class SearchApi {
           .get();
       retval = results.docs.map((e) => Faculty.fromMap(e.data())).toList();
     } catch (e) {
-      Utilities.log(e.toString());
+      Utils.log(e.toString());
     }
     return retval;
   }
@@ -63,7 +63,7 @@ class SearchApi {
           .get();
       retval = results.docs.map((e) => Faculty.fromMap(e.data())).toList();
     } catch (e) {
-      Utilities.log(e.toString());
+      Utils.log(e.toString());
     }
     return retval;
   }

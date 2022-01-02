@@ -40,7 +40,7 @@ class AdminHomeBody extends ConsumerWidget {
   // }
 }
 
-class _AdminBody extends StatelessWidget {
+class _AdminBody extends ConsumerWidget {
   const _AdminBody({
     Key? key,
     required this.notifier,
@@ -49,12 +49,19 @@ class _AdminBody extends StatelessWidget {
   final AuthNotifier notifier;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final instutution = ref.watch(InstitutionProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('Welcome Admin!', style: Theme.of(context).textTheme.headline3),
+
+
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(instutution.title!,
+              style: Theme.of(context).textTheme.headline3),
+        ),
         const SizedBox(height: 20),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 32),
@@ -192,9 +199,9 @@ class _AdminMenuCard extends StatelessWidget {
           hoverColor: Colors.purple.shade300,
           splashColor: Colors.purple.shade100,
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const CoursesPage()));},
-            
-          
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const CoursesPage()));
+          },
           child: Card(
             // shape: ShapeBorder(),
             elevation: 25,

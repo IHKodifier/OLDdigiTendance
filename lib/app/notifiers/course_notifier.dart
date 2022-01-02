@@ -11,7 +11,7 @@ class CourseNotifier extends StateNotifier<Course> {
   void setPreReqsonCourse(QuerySnapshot<Map<String, dynamic>> data) {
     data.docs.forEach((element) {
       state.preReqs!.add(Course.fromData(element.data()));
-      Utilities.log(
+      Utils.log(
           'added ${element.data().toString()} to selected Course\'s preREQs ');
     });
   }
@@ -23,7 +23,7 @@ class CourseNotifier extends StateNotifier<Course> {
 
       state.sessions!.add(Session.fromData(element.data()));
 
-      Utilities.log(
+      Utils.log(
           'ADDED  ${element.data()['sessionId'] + element.data()['faculty']} to selected Course\'s SESSIONS ');
     });
   }

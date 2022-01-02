@@ -40,7 +40,7 @@ class FacultySearchNotifier extends StateNotifier<FacultySearchState> {
     ascii = start.codeUnitAt(0);
     nextAscii = ascii + 1;
     end = String.fromCharCode(nextAscii);
-    Utilities.log('''  
+    Utils.log('''  
   performing Firestore Search for Faculty with $queryString
   start string = $start  end string = $end
   Ascii of start string = ${ascii.toString()} Ascii of end string = ${(nextAscii).toString()}  

@@ -35,8 +35,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   setUserInAuthState(User? user) async {
     //TODO transform to AppUser and set then set state
     final firestoreService = thisref.watch(firestoreApiProvider);
-    var data = await firestoreService.getAppUserDoc(userId: user!.email);
-    AppUser appUser = AppUser.fromJson(data, user!.email);
+    var data = await firestoreService.getAppUserDoc(userId: user!.email,refBase: thisref);
+    AppUser appUser = AppUser.fromJson(data.docs[0].data(), user!.email);
     // appUser = AppUser.fromFirebaseUser(user!);
     // final authstate = thisref.watch(authStateProvider);
     // var newState = AuthState().initializeFrom(state);
@@ -52,7 +52,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     //   ${state.toString()}
     //   ''');
     state = newState;
-    Utilities.log(''''
+    Utils.log(''''
       AuthState has been updated . new state equals  
       ${newState.toString()}
       ''');
@@ -69,6 +69,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> signOut() async {
     authApi = thisref.watch(authApiProvider);
     await authApi!.signOut();
-    Utilities.log(FirebaseAuth.instance.currentUser.toString());
+    Utils.log(FirebaseAuth.instance.currentUser.toString());
   }
 }

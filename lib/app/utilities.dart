@@ -1,4 +1,4 @@
-class Utilities {
+class Utils {
    static log(String? data) {
     print('''
 App LOG ____________________________________________

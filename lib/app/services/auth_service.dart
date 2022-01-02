@@ -55,7 +55,7 @@ class AuthApi {
       userCredential = await instance.signInWithEmailAndPassword(
           email: _email, password: _password);
     } catch (e) {
-      Utilities.log(e.toString());
+      Utils.log(e.toString());
     }
     if (userCredential.user != null) {
       return userCredential.user;

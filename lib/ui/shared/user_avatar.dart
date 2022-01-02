@@ -83,7 +83,7 @@ class _RolesDropDown extends ConsumerWidget {
             if (role.roleName == val) {
               notifier.setSelectedRole(role);
 
-              Utilities.log('''selectedRole has been switched to
+              Utils.log('''selectedRole has been switched to
                   
                    ${notifier.state.selectedRole!.roleName}''
                       ''');

@@ -24,7 +24,7 @@ class SessionsEditorWidget extends ConsumerWidget {
   }
 
   Widget onError(object, StackTrace? st, data) {
-    Utilities.log(st.toString());
+    Utils.log(st.toString());
     return Center(child: Text('error Encountered ${object.toString()}\n $st'));
   }
 

@@ -202,7 +202,7 @@ class _NewCourseBodyState extends ConsumerState<NewCourseBody> {
   }
 
   facultySuggestionSelected(Faculty? faculty) {
-    Utilities.log('${faculty.toString()} has been selected from search');
+    Utils.log('${faculty.toString()} has been selected from search');
     // course.
   }
 

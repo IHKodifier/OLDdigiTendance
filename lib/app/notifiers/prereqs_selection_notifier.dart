@@ -11,7 +11,7 @@ class PreReqsSelectionNotifier
   PreReqsSelectionNotifier(this.ref) : super(const AsyncValue.loading()) {
     // initializePreReqsSelectionState();
 
-    Utilities.log(
+    Utils.log(
       state.whenData((data) => data).value.allCourses!.length.toString(),
     );
     //   Utilities.log(state.asData!.value.selectedCourses.toString());

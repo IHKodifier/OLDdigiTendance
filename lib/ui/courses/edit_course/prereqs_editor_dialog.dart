@@ -10,6 +10,9 @@ class PreReqsEditorDialog extends ConsumerStatefulWidget {
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _PreReqsEditorDialogState();
+  void resetSelection() {
+    
+  }
 }
 
 class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
@@ -54,16 +57,14 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
     allCourses = data;
     selectedCourses = ref.read(currentCourseProvider).preReqs;
     availableCourses.clear();
-    Utilities.log('cleared available courses');
+    Utils.log('cleared available courses');
     allCourses!.forEach((element) {
-      if (!selectedCourses!.contains(element)) {
-        Utilities.log('adding ${element!.courseId} to available courses');
+      if (!selectedCourses!.contains(element) & (element != originalState)) {
+        Utils.log('adding ${element!.courseId} to available courses');
         availableCourses.add(element);
       }
     });
 //build selectedand available lists
-
-
 
     return Container(
       height: MediaQuery.of(context).size.height * .8,
@@ -77,34 +78,62 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
           ),
 
           Container(
-            decoration: BoxDecoration(
-                border: Border.all(
-                    width: 3, color: Theme.of(context).primaryColor)),
+            // decoration: BoxDecoration(
+            //     border: Border.all(
+            //         width: 3, color: Theme.of(context).primaryColor)),
             child: Expanded(
-              child: Wrap(
-                children: selectedCourses!
-                    .map((e) => Container(
-                          width: 150,
-                          margin: EdgeInsets.all(8),
-                          child: ListTile(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            title: Text(e!.courseId!),
-                            onTap: () {
-                              // final notifier = ref.watch(
-                              //     currentCourseProvider.notifier);
-                              // notifier.removePreReq(e);
-                              setState(() {
-                                selectedCourses!.remove(e);
-                              });
-                            },
-                          ),
-                        ))
-                    .toList(),
+              flex: 0,
+              child: Card(
+                // shape: ShapeBorder(),
+                elevation: 5,
+                color: Colors.green.shade100,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: selectedCourses!
+                        .map((e) => InputChip(
+                              elevation: 10,
+                              labelPadding: EdgeInsets.all(8),
+                              backgroundColor: Colors.white,
+                              avatar: CircleAvatar(
+                                backgroundColor: Theme.of(context).accentColor,
+                                // minRadius: 200,
+                                radius: 250,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: FittedBox(
+                                    child: Text(
+                                      e.courseId!,
+                                      style: TextStyle(
+                                          // fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              label: Text(
+                                e.courseTitle!,
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black54),
+                              ),
+                              onDeleted: () {
+                                setState(() {
+                                  selectedCourses!.remove(e);
+                                  availableCourses.add(e);
+                                });
+                              },
+                              deleteIcon: Icon(
+                                Icons.cancel,
+                                color: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.7),
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ),
               ),
             ),
           ),
@@ -113,34 +142,52 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
           ),
           Text('available courses'),
           Container(
-            decoration: BoxDecoration(
-                // color: Theme.of(context).primaryColor,
-                border: Border.all(
-                    width: 3, color: Theme.of(context).primaryColor)),
+            // decoration: BoxDecoration(
+            // color: Theme.of(context).primaryColor,
+            // border: Border.all(
+            //     width: 3, color: Theme.of(context).primaryColor)),
             // color: Colors.orange.shade200,
             child: Expanded(
               child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
                 children: availableCourses
-                    .map((e) => Container(
-                          width: 150,
-                          margin: EdgeInsets.all(8),
-                          child: ListTile(
-                            onTap: () {
-                              // final notifier = ref.watch(
-                              //     currentCourseProvider.notifier);
-                              // notifier.removePreReq(e);
-                              setState(() {
-                                selectedCourses!.add(e!);
-                              });
-                            },
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 1),
-                              borderRadius: BorderRadius.circular(10),
+                    .map((e) => ActionChip(
+                          elevation: 10,
+                          labelPadding: EdgeInsets.all(8),
+                          backgroundColor: Colors.white,
+                          avatar: CircleAvatar(
+                            backgroundColor: Theme.of(context).accentColor,
+                            // minRadius: 200,
+                            radius: 250,
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: FittedBox(
+                                child: Text(
+                                  e!.courseId!,
+                                  style: TextStyle(
+                                      // fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
-                            title: Text(e!.courseId!),
                           ),
+                          label: Text(
+                            e.courseTitle!,
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.black54),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedCourses!.add(e);
+                            });
+                          },
+
+                          // deleteIcon: Icon(
+                          //   Icons.cancel,
+                          //   color:
+                          //       Theme.of(context).primaryColor.withOpacity(0.7),
+                          // ),
                         ))
                     .toList(),
               ),
@@ -153,5 +200,10 @@ class _PreReqsEditorDialogState extends ConsumerState<PreReqsEditorDialog> {
   }
 
   ///TODO
-// Build list exlusivity functions
+// reset state to original
+  void resetState() {
+    setState(() {
+      widget.originalState = this.originalState;
+    });
+  }
 }
