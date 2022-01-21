@@ -9,17 +9,18 @@ import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/faculty.dart';
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/auth_notifier.dart';
+import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/notifiers/faculty_search_notifier.dart';
 import 'package:digitendance/app/notifiers/institution_notifier.dart';
-import 'package:digitendance/app/notifiers/prereqs_selection_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/faculty_search_state.dart';
 import 'package:digitendance/states/institution_state.dart';
-import 'package:digitendance/states/prereqs_selection_state.dart';
+import 'package:digitendance/states/course_editing_state.dart';
+import 'package:digitendance/ui/courses/edit_course/prereqs_editing_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
@@ -34,13 +35,15 @@ import '../states/auth_state.dart';
 ///
 ///                                  INSTANCE PROVIDERS
 
+/// INSTANCE PROVIDERS
+
 //////[authInstanceProvider] shall provide the
 ///[FirebaseAuth] instance to the entire app
 final Provider<FirebaseAuth> authInstanceProvider =
     Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-///
-///
+/// API PROVIDERS
+
 ///[firestoreProvider] shall provide the firestore instance
 final firestoreProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
@@ -59,11 +62,27 @@ final authApiProvider = Provider<AuthApi>(
 /// shall provide the [FirestoreApi] instance
 final firestoreApiProvider = Provider<FirestoreApi>((ref) => FirestoreApi());
 
+///                                             STREAM PROVIDERS
 ///
-///                                      STATE PROVIDERS
+///
 ///listens to [AuthStatechanges]  on [FirebaseAuth] instance and yields a firebase [User] or [null] when the auth state changes
 final authStateChangesStreamProvider = StreamProvider<User?>(
     (ref) => ref.watch(authInstanceProvider).authStateChanges());
+
+/// [coursesStreamProvider] provides stream of [Course] from firestore
+
+final coursesStreamProvider =
+    StreamProvider<QuerySnapshot<Map<String, dynamic>>>((ref) {
+  var instituionId = ref.read(InstitutionProvider).docRef;
+
+  return ref
+      .watch(firestoreProvider)
+      .doc(instituionId.path)
+      .collection('courses')
+      .snapshots();
+});
+
+///                                      STATE PROVIDERS
 
 /// shall provide [AuthNotifier] and [AuthState]
 final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
@@ -82,25 +101,11 @@ final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
     var data =
         await firestoreApi.getAppUserDoc(userId: authUser.email!, refBase: ref);
     AppUser _appUser =
-        AppUser.fromJson(data.docs[0].data()!, data.docs[0].data()['email']);
+        AppUser.fromJson(data.docs[0].data(), data.docs[0].data()['email']);
     return _appUser;
   }
 });
 
-/// [coursesStreamProvider] provides stream of [Course] from firestore
-
-final coursesStreamProvider =
-    StreamProvider<QuerySnapshot<Map<String, dynamic>>>((ref) {
-  var instituionId = ref.read(InstitutionProvider).docRef;
-
-  return ref
-      .watch(firestoreProvider)
-      .doc(instituionId.path)
-      .collection('courses')
-      .snapshots();
-});
-
-// ignore: deprecated_member_use
 final colorPalleteProvider = Provider<dynamic>((ref) {
   return colorsList;
 });
@@ -127,6 +132,11 @@ var colorsList = [
   Colors.amberAccent
 ];
 
+///                                STATE NOTIFIER PROVIDERS
+///
+///
+///
+///
 ///[currentCourseProvider] provides inatance of currently selected [Course] managedg by [CourseNotifier]
 final currentCourseProvider =
     StateNotifierProvider<CourseNotifier, Course>((ref) {
@@ -136,7 +146,7 @@ final currentCourseProvider =
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
 final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
   var institutiondocRef = ref.read(InstitutionProvider).docRef;
-  final course = ref.watch(currentCourseProvider);
+  final course = ref.read(currentCourseProvider);
   return ref
       .read(firestoreProvider)
       .doc(institutiondocRef.path)
@@ -178,12 +188,6 @@ final sessionListProvider =
           }));
 });
 
-// /// [instotutionDocRefProvider] will provide the [DocumentReference] for the institution
-// /// to which the logged in user belongs
-// final instotutionDocRefProvider = Provider<DocumentReference>((ref) {
-//   // return;
-// });
-
 ///[InstitutionProvider] will provide the state of [Instituion] and will be managed by [InstitutionNotifier]
 final InstitutionProvider =
     StateNotifierProvider<InstitutionNotifier, Institution>((ref) {
@@ -208,7 +212,12 @@ final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
           (value) => value.docs.map((e) => Course.fromData(e.data())).toList());
 });
 
-final preReqsSelectionProvider = StateNotifierProvider<PreReqsSelectionNotifier,
-    AsyncValue<PreReqsSelectionState>>((ref) {
-  return PreReqsSelectionNotifier(ref);
+final courseEditingProvider =
+    StateNotifierProvider<CourseEditingStateNotifier, CourseEditingState>(
+        (ref) {
+  final preiousState = ref.read(currentCourseProvider);
+  var retval = CourseEditingStateNotifier(ref, preiousState);
+
+  
+  return retval;
 });

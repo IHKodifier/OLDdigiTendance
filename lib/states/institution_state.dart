@@ -15,7 +15,7 @@ class Institution extends Equatable {
       Map<String, dynamic>? data, DocumentReference docRef) {
     Institution institution = Institution();
     institution.title = data!['title'];
-    institution.id = data!['id'];
+    institution.id = data['id'];
     institution.docRef = docRef;
     return institution;
   }

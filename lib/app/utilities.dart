@@ -1,8 +1,7 @@
 class Utils {
-   static log(String? data) {
+  static log(String? data) {
     print('''
-App LOG ____________________________________________
-${data!} 
+Digitendance App LOG ____________>>>    ${data!} 
 ''');
   }
 }

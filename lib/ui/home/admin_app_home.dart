@@ -12,7 +12,7 @@ class AdminHomeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, widgetRef) {
-    final notifier = widgetRef.watch(authStateProvider.notifier);
+    final notifier = widgetRef.read(authStateProvider.notifier);
     selectedRole = widgetRef.watch(authStateProvider).selectedRole!;
 
     widgetRef.watch(authStateChangesStreamProvider);
@@ -203,7 +203,7 @@ class _AdminMenuCard extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const CoursesPage()));
           },
           child: Card(
-            // shape: ShapeBorder(),
+            // shape: Bordersh(),
             elevation: 25,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -15,7 +15,7 @@ class CourseCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    this.notifier = ref.watch(currentCourseProvider.notifier);
+    this.notifier = ref.read(currentCourseProvider.notifier);
 
     int i = Random().nextInt(ref.read(colorPalleteProvider).length);
 

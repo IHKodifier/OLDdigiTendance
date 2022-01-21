@@ -16,7 +16,7 @@ class FacultySearchListTile extends ConsumerWidget {
           size: 65,
         ),
         title: Text(faculty.firstName! + ' ' + faculty.lastName!),
-        subtitle: Text(faculty.userId!),
+        subtitle: Text(faculty.userId),
       ),
     );
   }

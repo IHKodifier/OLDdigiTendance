@@ -14,13 +14,14 @@ class CourseDetailPage extends ConsumerWidget {
   CourseDetailPage({Key? key}) : super(key: key);
   bool editEnabled = false;
   late BuildContext localContext;
+  late Course course;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     localContext = context;
-    final Course course = ref.watch(currentCourseProvider);
+    course = ref.watch(currentCourseProvider);
     final institution = ref.read(InstitutionProvider);
-    final notifier = ref.watch(currentCourseProvider.notifier);
+    final notifier = ref.read(currentCourseProvider.notifier);
     String appBarTitle = course.courseId ?? 'New Course';
     // course.courseId = 'new course';
 
@@ -49,11 +50,11 @@ class CourseDetailPage extends ConsumerWidget {
   }
 
   onPressed() {
-    // Utilities.log('''
-    //       Navigating to Edit course Route
-    //       course state equals
-    //       ${course.toString()}
-    //       ''');
+    Utils.log('''
+          Navigating to Edit course Route
+          course state equals
+          ${course.toString()}
+          ''');
     Navigator.of(localContext)
         .push(MaterialPageRoute(builder: (_) => const EditCourse()));
   }
