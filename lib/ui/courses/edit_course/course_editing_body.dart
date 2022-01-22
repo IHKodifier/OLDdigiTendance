@@ -20,10 +20,13 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   TextEditingController courseIdController = TextEditingController();
   TextEditingController courseCreditController = TextEditingController();
   TextEditingController facultyController = TextEditingController();
-  late final PreReqsEditingState state;
-  late final PreReqsEditingNotifier notifier;
-  late final Course editedCourse = Course();
-  late final unTouchedCourse ;//ref.read(currentCourseProvider);
+  late List<Course?> allCourses;
+  List<Course?> availableCourses = [];
+  List<Course> selectedCourses = [];
+  AsyncValue? asyncAllCourses;
+
+  final Course editedCourse = Course();
+  late final unTouchedCourse;
   late GlobalKey<FormState> _formKey;
   bool get formIsModified => editedCourse != unTouchedCourse;
 
@@ -33,7 +36,13 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
 
     ///TODO do custom initialozation logic below super call
     // state = ref.watch(courseEditingProvider);
-    unTouchedCourse = ref.read(currentCourseProvider);
+    asyncAllCourses = ref.read(allCoursesProvider);
+    unTouchedCourse = ref.read(currentCourseProvider).copyWith();
+    selectedCourses = ref
+        .read(currentCourseProvider)
+        .copyWith(preReqs: ref.read(currentCourseProvider).preReqs)
+        .preReqs!
+        .toList();
   }
 
   _buildAllTextFields() {
@@ -52,12 +61,11 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   Widget build(BuildContext context) {
     // TODO: implement build
     _formKey = GlobalKey<FormState>();
-    state = ref.read(preReqsEditingProvider);
-    // state.newState = state.clone().previousState;
-    notifier = ref.read(preReqsEditingProvider.notifier);
+
     initiateTextControllers();
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Container(
         width: double.infinity,
         child: Scrollbar(
@@ -66,9 +74,12 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildAllTextFields(),
-                  PreReqsEditingWidget(),
+                  _buildSelectedCoursesFlex(removeFromSelected),
+                  _buildAvailableCoursesFlex(addToSelection),
+                  // PreReqsEditingWidget(),
                   // SessionsEditorWidget(),
                   // buildButtons(),
                   SizedBox(
@@ -85,10 +96,12 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   _buildIdField() {
     return TextFormField(
       controller: courseIdController,
-      // initialValue: state.originalState!.courseId,
       decoration: const InputDecoration(
         // prefixIcon: Icon(Icons.person),
-        icon: Icon(Icons.person),
+        icon: Icon(
+          Icons.document_scanner_sharp,
+          size: 40,
+        ),
         hintText: 'Unique ID of this course',
         labelText: 'CourseId *',
       ),
@@ -108,7 +121,10 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       controller: courseTitleController,
       // initialValue: state.originalState!.courseTitle,
       decoration: const InputDecoration(
-        icon: Icon(Icons.title),
+        icon: Icon(
+          Icons.title,
+          size: 40,
+        ),
         hintText: 'Exact Title of The Course',
         labelText: 'Course Tiltle * ',
       ),
@@ -130,7 +146,10 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       controller: courseCreditController,
       // initialValue: state.originalState!.credits.toString(),
       decoration: const InputDecoration(
-        icon: Icon(Icons.money),
+        icon: Icon(
+          Icons.note_sharp,
+          size: 40,
+        ),
         hintText: 'Number of Credits',
         labelText: 'Credits *',
       ),
@@ -196,12 +215,9 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   }
 
   onSave() {
-    // editedCourse = Course();
-    // unTouchedCourse = ref.read(currentCourseProvider);
-
     _formKey.currentState!.validate();
     _formKey.currentState!.save();
-    editedCourse.preReqs = state.newPreReqsState;
+    editedCourse.preReqs = selectedCourses;
     // state.newState = state.clone().previousState;
     // localState.newState = localState.previousState!
     //     .copyWith(courseTitle: localState.previousState!.courseTitle);
@@ -210,12 +226,12 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     // localState.newState!.credits = int.parse(courseCreditController.text);
     if (formIsModified) {
       Utils.log('form has unsaved Changes');
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('form has unsaved Changes')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text('form is Modified')));
     } else {
       Utils.log('form Does NOT has unsaved Changes');
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('form has NO unsaved Changes')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text('form is NOT Modified')));
     }
 
     // Utils.log('${formIsModified.toString()}');
@@ -228,4 +244,131 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   onReset() {}
 
   onCancel() {}
+
+  Widget _buildSelectedCoursesFlex(Function action) {
+    final PreReqsEditingNotifier notifier =
+        ref.read(preReqsEditingProvider.notifier);
+    return Flexible(
+      fit: FlexFit.loose,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: selectedCourses
+              .map((e) => _buildChip(e, removeFromSelected))
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvailableCoursesFlex(
+    Function action,
+  ) {
+    return asyncAllCourses!.when(
+      error: (error, stackTrace, previous) => const Text('error encountered'),
+      loading: (previous) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const Text('loading available Courses'),
+        ],
+      ),
+      data: (data) {
+        //TODO purge available courses of thecurrent and selectd courses
+
+        allCourses = data;
+        availableCourses.clear();
+        Utils.log('cleared available courses');
+        availableCourses = allCourses;
+        _purgeCurrent();
+
+        var set1 = Set<Course>.from(availableCourses);
+        var set2 = Set<Course>.from(selectedCourses);
+        var setDiff = set1.difference(set2);
+        Utils.log(setDiff.length.toString());
+        availableCourses = List.from(setDiff);
+
+        return Flexible(
+          fit: FlexFit.loose,
+          child: Container(
+            padding: EdgeInsets.all(8),
+            // color: Colors.blueGrey[50],
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: availableCourses
+                  .map((e) => _buildChip(e!, addToSelection))
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildChip(Course e, Function action) {
+    return ActionChip(
+      elevation: 10,
+      labelPadding: EdgeInsets.all(8),
+      backgroundColor: Colors.white,
+      avatar: CircleAvatar(
+        backgroundColor: Theme.of(context).accentColor,
+        // minRadius: 200,
+        radius: 250,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: FittedBox(
+            child: Text(
+              e.courseId!,
+              style: TextStyle(
+                  // fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+      label: Text(
+        e.courseTitle!,
+        style: TextStyle(fontSize: 18, color: Colors.black54),
+      ),
+      onPressed: () {
+        addToSelection(e);
+        // selectedCourses.remove(e);
+      },
+    );
+  }
+
+  void removeFromSelected(e) {
+    // state.newState!.preReqs!.remove(e);
+    // notifier.removePreReq(e);
+    // notifier.addSelectedCourse(e);
+    if (!availableCourses.contains(e)) {
+      // availableCourses.add(e);
+      setState(() {});
+    }
+  }
+
+  void _purgeCurrent() {
+    Utils.log('''
+PURGING  ${ref.read(currentCourseProvider).courseId}
+from list of available courses i.e.${availableCourses.map((e) => e!.courseId)}...
+availableCourses length =${availableCourses.length.toString()} 
+         ''');
+    availableCourses.removeWhere((course) =>
+        course!.courseId == ref.read(currentCourseProvider).courseId);
+    Utils.log(''' PURGE CURRENT COMPLETE
+    availableCourses new length =${availableCourses.length.toString()} 
+    ''');
+  }
+
+  void addToSelection(e) {
+    setState(() {
+      availableCourses.remove(e);
+    });
+    if (!selectedCourses.contains(e)) {
+      selectedCourses.add(e);
+    }
+  }
 }

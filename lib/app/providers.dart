@@ -158,7 +158,7 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
             final currentCourse = ref.read(currentCourseProvider);
             currentCourse.preReqs = value.docs.map((e) {
               Utils.log(
-                  '${e.data()['courseId']} HAS BEEN ADDED TO CUURENTCOURSE PROVIDER');
+                  '${e.data()['courseId']} HAS BEEN ADDED TO CUURENT COURSE PROVIDER');
 
               return Course.fromData(e.data());
             }).toList();

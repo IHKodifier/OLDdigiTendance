@@ -14,13 +14,14 @@ class Course extends Equatable {
     this.courseTitle,
     this.credits,
     // ignore: avoid_init_to_null
-    this.preReqs = null,
+    this.preReqs,
     List<Session?>? sessions,
   });
   Course.fromData(Map<String, dynamic> data) {
     courseId = data['courseId'];
     courseTitle = data['courseTitle'];
-    preReqs = data['preReqs'];
+    // preReqs = data['preReqs'];
+    preReqs = [];
     credits = data['credits'];
     // var x = data['preReqs'];
     // Utilities.log(' preReqs equals {$preReqs.toString()}');
@@ -31,7 +32,7 @@ class Course extends Equatable {
   String toString() {
     return '''courseId: $courseId, courseTitle: $courseTitle Credits: ${credits.toString()}, number of preReqs: ${preReqs!.length}
     number of Sessions: ${sessions!.length}
-    PREREQS;;
+    PREREQS
      ${preReqs!.map((e) => e.courseId.toString())}
 
    SESSIONS;;
@@ -45,8 +46,8 @@ class Course extends Equatable {
       'courseId': courseId,
       'courseTitle': courseTitle,
       'credits': credits,
-//   preReqs = [];
-//  sessions = [];
+      // preReqs = [],
+//  sessions = [],
     };
     return _map;
   }
@@ -54,8 +55,11 @@ class Course extends Equatable {
   @override
   // TODO: implement props
   List<Object?> get props => [
-        courseId, courseTitle, credits,
-        // preReqs, preReqs!.length
+        courseId,
+        courseTitle,
+        credits,
+        preReqs,
+        preReqs!.length,
       ];
 
   Course copyWith(
