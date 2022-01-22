@@ -2,7 +2,7 @@ import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/states/course_editing_state.dart';
+import 'package:digitendance/states/prereqs_editing_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,25 +12,25 @@ class PreReqsEditingWidget extends ConsumerStatefulWidget {
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _PreReqsEditingWidgetState();
-  // void resetSelection() {}
 }
 
 class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
   @override
   // TODO: implement ref
-  WidgetRef get ref => super.ref;
+  get ref => super.ref;
 
   late List<Course?> allCourses;
   // List<Course>? selectedCourses;
   List<Course?> availableCourses = [];
   AsyncValue? asyncData;
-  late CourseEditingState state;
+  late PreReqsEditingState state;
 
   @override
   void initState() {
     super.initState();
-    state = ref.read(courseEditingProvider);
+    state = ref.read(preReqsEditingProvider);
     asyncData = ref.read(allCoursesProvider);
+    
   }
 
   @override
@@ -81,16 +81,17 @@ class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
   // }
 
   Widget onData(dynamic data) {
-    state = ref.read(courseEditingProvider);
+    state = ref.read(preReqsEditingProvider);
     allCourses = data;
     availableCourses.clear();
     Utils.log('cleared available courses');
 
     availableCourses = allCourses;
     _purgeCurrent();
+    state.newPreReqsState = state.copy().previousPreReqsState;
 
     var set1 = Set.from(availableCourses);
-    var set2 = Set.from(state.previousState!.preReqs!);
+    var set2 = Set.from(state.newPreReqsState);
     var setDiff = set1.difference(set2);
     Utils.log(setDiff.length.toString());
     availableCourses = List.from(setDiff);
@@ -110,7 +111,7 @@ class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
             ),
           ),
           Text(
-            'PreRequisites added to this course \(${state.previousState!.preReqs!.length.toString()}\)',
+            'PreRequisites added to this course \(${state.previousPreReqsState.length.toString()}\)',
             style:
                 Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 18),
           ),
@@ -138,8 +139,8 @@ class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
   }
 
   Flexible _buildSelectedCoursesFlex(Function action) {
-    final CourseEditingStateNotifier notifier =
-        ref.read(courseEditingProvider.notifier);
+    final PreReqsEditingNotifier notifier =
+        ref.read(preReqsEditingProvider.notifier);
     return Flexible(
       fit: FlexFit.loose,
       child: Container(
@@ -147,24 +148,24 @@ class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
         child: Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: state.previousState!.preReqs!
-              .map((e) => _buildActionChip(e, notifier, removeFromSelected))
+          children: state.newPreReqsState!
+              .map((e) => _buildActionChip(e!, notifier, removeFromSelected))
               .toList(),
         ),
       ),
     );
   }
 
-  void addToSelection(e, CourseEditingStateNotifier notifier) {
+  void addToSelection(e, PreReqsEditingNotifier notifier) {
     setState(() {
       availableCourses.remove(e);
     });
-    if (!state.newState!.preReqs!.contains(e)) {
+    if (!state.newPreReqsState.contains(e)) {
       notifier.addPreReq(e);
     }
   }
 
-  void removeFromSelected(e, CourseEditingStateNotifier notifier) {
+  void removeFromSelected(e, PreReqsEditingNotifier notifier) {
     // state.newState!.preReqs!.remove(e);
     notifier.removePreReq(e);
     // notifier.addSelectedCourse(e);
@@ -175,7 +176,7 @@ class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
   }
 
   Widget _buildActionChip(
-      Course e, CourseEditingStateNotifier notifier, Function action) {
+      Course e, PreReqsEditingNotifier notifier, Function action) {
     return ActionChip(
       elevation: 10,
       labelPadding: EdgeInsets.all(8),
@@ -216,7 +217,7 @@ class _PreReqsEditingWidgetState extends ConsumerState<PreReqsEditingWidget> {
   Flexible _buildAvailableCoursesFlex(
     Function action,
   ) {
-    final notifier = ref.read(courseEditingProvider.notifier);
+    final notifier = ref.read(preReqsEditingProvider.notifier);
 
     return Flexible(
       fit: FlexFit.loose,

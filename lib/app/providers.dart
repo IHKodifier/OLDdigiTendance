@@ -19,7 +19,7 @@ import 'package:digitendance/app/services/firestore_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/faculty_search_state.dart';
 import 'package:digitendance/states/institution_state.dart';
-import 'package:digitendance/states/course_editing_state.dart';
+import 'package:digitendance/states/prereqs_editing_state.dart';
 import 'package:digitendance/ui/courses/edit_course/prereqs_editing_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -170,6 +170,7 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
 });
 
 /// [sessionListProvider] provides all the session for a [Course]
+/// 
 final sessionListProvider =
     FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
   final docRef = ref.read(InstitutionProvider).docRef;
@@ -212,11 +213,11 @@ final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
           (value) => value.docs.map((e) => Course.fromData(e.data())).toList());
 });
 
-final courseEditingProvider =
-    StateNotifierProvider<CourseEditingStateNotifier, CourseEditingState>(
+final preReqsEditingProvider =
+    StateNotifierProvider<PreReqsEditingNotifier, PreReqsEditingState>(
         (ref) {
-  final preiousState = ref.read(currentCourseProvider);
-  var retval = CourseEditingStateNotifier(ref, preiousState);
+  final previousPreReqsState = ref.read(currentCourseProvider).preReqs;
+  var retval = PreReqsEditingNotifier(ref, previousPreReqsState);
 
   
   return retval;

@@ -2,7 +2,7 @@ import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/states/course_editing_state.dart';
+import 'package:digitendance/states/prereqs_editing_state.dart';
 import 'package:digitendance/ui/courses/edit_course/prereqs_editing_widget.dart';
 import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +20,12 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   TextEditingController courseIdController = TextEditingController();
   TextEditingController courseCreditController = TextEditingController();
   TextEditingController facultyController = TextEditingController();
-  late final CourseEditingState state;
-  late final CourseEditingStateNotifier notifier;
+  late final PreReqsEditingState state;
+  late final PreReqsEditingNotifier notifier;
   late final Course editedCourse = Course();
-  late final unTouchedCourse;
+  late final unTouchedCourse ;//ref.read(currentCourseProvider);
   late GlobalKey<FormState> _formKey;
-  bool get formIsModified => editedCourse != ref.read(currentCourseProvider);
+  bool get formIsModified => editedCourse != unTouchedCourse;
 
   @override
   void initState() {
@@ -52,9 +52,9 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   Widget build(BuildContext context) {
     // TODO: implement build
     _formKey = GlobalKey<FormState>();
-    state = ref.read(courseEditingProvider);
+    state = ref.read(preReqsEditingProvider);
     // state.newState = state.clone().previousState;
-    notifier = ref.read(courseEditingProvider.notifier);
+    notifier = ref.read(preReqsEditingProvider.notifier);
     initiateTextControllers();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -188,20 +188,20 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     Utils.log(
         'Starting Execution of initiateTextControllers of CourseEditingBodyState');
 
-    courseIdController.text = state.previousState!.courseId!;
-    courseTitleController.text = state.previousState!.courseTitle!;
-    courseCreditController.text = state.previousState!.credits.toString();
+    courseIdController.text = unTouchedCourse.courseId!;
+    courseTitleController.text = unTouchedCourse.courseTitle!;
+    courseCreditController.text = unTouchedCourse.credits.toString();
     Utils.log(
         'Finished Execution of initiateTextControllers of CourseEditingBodyState');
   }
 
   onSave() {
     // editedCourse = Course();
-    unTouchedCourse = ref.read(currentCourseProvider);
+    // unTouchedCourse = ref.read(currentCourseProvider);
 
     _formKey.currentState!.validate();
     _formKey.currentState!.save();
-    editedCourse.preReqs = state.newState!.preReqs;
+    editedCourse.preReqs = state.newPreReqsState;
     // state.newState = state.clone().previousState;
     // localState.newState = localState.previousState!
     //     .copyWith(courseTitle: localState.previousState!.courseTitle);
