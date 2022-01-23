@@ -25,7 +25,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   List<Course> selectedCourses = [];
   AsyncValue? asyncAllCourses;
 
-  final Course editedCourse = Course();
+  Course editedCourse = Course();
   late final unTouchedCourse;
   late GlobalKey<FormState> _formKey;
   bool get formIsModified => editedCourse != unTouchedCourse;
@@ -76,6 +76,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  SizedBox(height: 25),
                   _buildAllTextFields(),
                   _buildSelectedCoursesFlex(removeFromSelected),
                   _buildAvailableCoursesFlex(addToSelection),
@@ -218,32 +219,102 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     _formKey.currentState!.validate();
     _formKey.currentState!.save();
     editedCourse.preReqs = selectedCourses;
-    // state.newState = state.clone().previousState;
-    // localState.newState = localState.previousState!
-    //     .copyWith(courseTitle: localState.previousState!.courseTitle);
-    // localState.newState!.courseId = courseIdController.text;
-    // localState.newState!.courseTitle = courseTitleController.text;
-    // localState.newState!.credits = int.parse(courseCreditController.text);
+    //TODO.... do the form saving to firestore stuff
+
     if (formIsModified) {
-      Utils.log('form has unsaved Changes');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: const Text('form is Modified')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text('form is M o d i f i e d')));
     } else {
       Utils.log('form Does NOT has unsaved Changes');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: const Text('form is NOT Modified')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('form is       N   O   T      Modified')));
     }
-
-    // Utils.log('${formIsModified.toString()}');
-    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //     content:
-    //         Text('Both state are ${state.isModified ? 'NOT' : ''} equal ')));
-    // debugPrint({statement});
   }
 
-  onReset() {}
+  onReset() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Row(
+                children: [
+                  const Icon(Icons.info_outline,
+                      size: 60, color: Colors.deepOrange),
+                  const Text('Warning'),
+                ],
+              ),
+              content: Text(
+                  'All data in the form will bereset to its original .\n Are you sure...?'),
+              actions: [
+                TextButton(
+                  onPressed: resetForm,
+                  child: const Text('Yes'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('No'),
+                ),
+              ],
+            ));
+  }
 
-  onCancel() {}
+  void resetForm() {
+    editedCourse = unTouchedCourse;
+    setState(() {});
+    Navigator.pop(context);
+  }
+
+  onCancel() {
+    _formKey.currentState!.validate();
+    _formKey.currentState!.save();
+    editedCourse.preReqs = selectedCourses;
+    if (formIsModified) {
+//show alert for unsaved changes
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: const [
+              Icon(
+                Icons.warning,
+                size: 50,
+                color: Colors.deepOrange,
+              ),
+              Text(
+                'Proceed With Caution',
+                style: TextStyle(fontSize: 26),
+              ),
+            ],
+          ),
+          content: const Text(
+            'You hve not Saved the edits.  \n Are you sure you want to cancel?',
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    editedCourse.nullify();
+                  });
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: const Text('Yes')),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('No')),
+          ],
+        ),
+      );
+    } else {
+      //just clear the state and pop the navigator
+      editedCourse.nullify();
+      Navigator.pop(context);
+    }
+  }
 
   Widget _buildSelectedCoursesFlex(Function action) {
     final PreReqsEditingNotifier notifier =
@@ -255,9 +326,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
         child: Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: selectedCourses
-              .map((e) => _buildChip(e, removeFromSelected))
-              .toList(),
+          children: selectedCourses.map((e) => _buildChip(e, action)).toList(),
         ),
       ),
     );
@@ -270,9 +339,12 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       error: (error, stackTrace, previous) => const Text('error encountered'),
       loading: (previous) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const Text('loading available Courses'),
+        children: const [
+          CircularProgressIndicator(),
+          Text(
+            'loading available Courses',
+            style: TextStyle(fontSize: 18),
+          ),
         ],
       ),
       data: (data) {
@@ -298,9 +370,8 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
             child: Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: availableCourses
-                  .map((e) => _buildChip(e!, addToSelection))
-                  .toList(),
+              children:
+                  availableCourses.map((e) => _buildChip(e!, action)).toList(),
             ),
           ),
         );
@@ -334,20 +405,16 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
         style: TextStyle(fontSize: 18, color: Colors.black54),
       ),
       onPressed: () {
-        addToSelection(e);
-        // selectedCourses.remove(e);
+        action(e);
       },
     );
   }
 
   void removeFromSelected(e) {
-    // state.newState!.preReqs!.remove(e);
-    // notifier.removePreReq(e);
-    // notifier.addSelectedCourse(e);
-    if (!availableCourses.contains(e)) {
-      // availableCourses.add(e);
-      setState(() {});
-    }
+    setState(() {
+      selectedCourses.remove(e);
+      availableCourses.add(e);
+    });
   }
 
   void _purgeCurrent() {

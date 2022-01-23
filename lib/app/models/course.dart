@@ -41,6 +41,14 @@ class Course extends Equatable {
     ''';
   }
 
+  void nullify() {
+    this.courseId = '';
+    this.courseTitle = '';
+    this.credits = null;
+    this.preReqs = [];
+    this.sessions = [];
+  }
+
   Map<String, dynamic> toMap() {
     var _map = {
       'courseId': courseId,

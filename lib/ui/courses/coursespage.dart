@@ -32,20 +32,27 @@ class CoursesPage extends ConsumerWidget {
           final courseNotifier = ref.watch(currentCourseProvider.notifier);
           navigateToAddCourse(context);
         },
-        label: const Text('New Course'),
+        label: Text(
+          'New Course',
+          style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                color: Colors.white,
+                // fontFamily: Goog¿,
+                fontSize: 22,
+              ),
+        ),
         icon: const Icon(
           Icons.add,
           size: 40,
         ),
       ),
       // floatingActionButtonLocation:
-          // FloatingActionButtonLocation.miniCenterFloat,
+      // FloatingActionButtonLocation.miniCenterFloat,
     );
   }
 
   navigateToAddCourse(BuildContext context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const NewCourse()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const NewCourse()));
   }
 }
 
