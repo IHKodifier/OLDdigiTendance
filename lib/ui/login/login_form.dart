@@ -28,13 +28,13 @@ class LoginForm extends ConsumerWidget {
     // ignore: unused_local_variable
 
     return stream.when(
-      error: (e, st, data) {
+      error: (e, st, ) {
         return Container(
           height: 50,
           color: Colors.blue,
         );
       },
-      loading: (data) {
+      loading: () {
         return CircularProgressIndicator();
       },
       data: (data) {

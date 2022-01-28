@@ -12,8 +12,8 @@ class PreReqsViewerWidget extends ConsumerWidget {
     final stream = ref.watch(preReqsProvider);
 
     return stream.when(
-      error: (e, st, data) => Center(child: Text('error encountered \n $e')),
-      loading: (data) => const Center(child: CircularProgressIndicator()),
+      error: (e, st, ) => Center(child: Text('error encountered \n $e')),
+      loading: () => const Center(child: CircularProgressIndicator()),
       data: (data) => Center(
         child: Container(
           alignment: Alignment.center,

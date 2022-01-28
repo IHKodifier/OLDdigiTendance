@@ -347,8 +347,8 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     Function action,
   ) {
     return asyncAllCourses!.when(
-      error: (error, stackTrace, previous) => const Text('error encountered'),
-      loading: (previous) => Column(
+      error: (error, stackTrace, ) => const Text('error encountered'),
+      loading: () => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
           CircularProgressIndicator(),

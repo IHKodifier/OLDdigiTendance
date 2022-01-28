@@ -19,11 +19,11 @@ class SessionsEditorWidget extends ConsumerWidget {
     );
   }
 
-  Widget onLoading(AsyncValue? data) {
+  Widget onLoading() {
     return Center(child: Container());
   }
 
-  Widget onError(object, StackTrace? st, data) {
+  Widget onError(object, StackTrace? st, ) {
     Utils.log(st.toString());
     return Center(child: Text('error Encountered ${object.toString()}\n $st'));
   }

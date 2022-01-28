@@ -5,7 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PreReqsEditingNotifier extends StateNotifier<PreReqsEditingState> {
-  final ProviderRefBase ref;
+   var ref;
+  
   PreReqsEditingNotifier(this.ref, state)
       : super(PreReqsEditingState(
         previousPreReqsState: state,

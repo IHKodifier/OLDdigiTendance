@@ -14,7 +14,7 @@ class TeacherAppHome extends ConsumerWidget {
     return asyncValue.when(
         data: (data) => Center(child: Text('Teacher Home',
         style: Theme.of(context).textTheme.headline2,)),
-        error: (e, st, data) => Center(child: Text(e.toString())),
-        loading: (_) => Center(child: CircularProgressIndicator()));
+        error: (e, st, ) => Center(child: Text(e.toString())),
+        loading: () => Center(child: CircularProgressIndicator()));
   }
 }

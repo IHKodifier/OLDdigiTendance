@@ -35,7 +35,7 @@ class FirestoreApi {
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getAppUserDoc(
-      {required String? userId, required ProviderRefBase refBase}) async {
+      {required String? userId, required var refBase}) async {
     var userQuerySnapshot = await instance
         .collectionGroup('users')
         .where('userId', isEqualTo: userId)

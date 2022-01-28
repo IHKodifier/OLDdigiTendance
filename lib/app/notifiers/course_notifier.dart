@@ -5,7 +5,7 @@ import 'package:digitendance/app/utilities.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CourseNotifier extends StateNotifier<Course> {
-  final ProviderRefBase ref;
+  final StateNotifierProviderRef<CourseNotifier, Course> ref;
   CourseNotifier(state, this.ref) : super(state);
   DocumentReference? get docRef => state.docRef;
 

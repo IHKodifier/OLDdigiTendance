@@ -181,7 +181,7 @@ final facultySearchProvider =
 
 final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
   var docRef = ref.read(InstitutionProvider).docRef;
-  ref.listen(currentCourseProvider, (course) {});
+  // ref.listen(currentCourseProvider, (course ) {});
   return FirebaseFirestore.instance
       .doc(docRef.path)
       .collection('courses')
