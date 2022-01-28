@@ -106,32 +106,6 @@ final currentAppUserProvider = FutureProvider<AppUser?>((ref) async {
   }
 });
 
-final colorPalleteProvider = Provider<dynamic>((ref) {
-  return colorsList;
-});
-
-var colorsList = [
-  Colors.red,
-  Colors.red.shade100,
-  Colors.red.shade500,
-  Colors.deepOrange.shade100,
-  Colors.deepOrange.shade500,
-  Colors.redAccent,
-  Colors.blueGrey.shade200,
-  Colors.greenAccent,
-  Colors.lightBlueAccent,
-  Colors.cyanAccent,
-  Colors.deepPurpleAccent,
-  Colors.lightGreenAccent,
-  Colors.indigoAccent,
-  Colors.pinkAccent,
-  Colors.tealAccent,
-  Colors.cyanAccent,
-  Colors.limeAccent,
-  Colors.pinkAccent,
-  Colors.amberAccent
-];
-
 ///                                STATE NOTIFIER PROVIDERS
 ///
 ///
@@ -163,14 +137,17 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
               return Course.fromData(e.data());
             }).toList();
 
-            return value.docs.map((e) => Course.fromData(e.data())).toList();
+            return value.docs
+                .map(
+                    (e) => Course.fromData(e.data(), e.reference))
+                .toList();
 
             //
           }));
 });
 
 /// [sessionListProvider] provides all the session for a [Course]
-/// 
+///
 final sessionListProvider =
     FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
   final docRef = ref.read(InstitutionProvider).docRef;
@@ -209,16 +186,41 @@ final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
       .doc(docRef.path)
       .collection('courses')
       .get()
-      .then(
-          (value) => value.docs.map((e) => Course.fromData(e.data())).toList());
+      .then((value) => value.docs
+          .map((e) => Course.fromData(e.data(), e.reference))
+          .toList());
 });
 
 final preReqsEditingProvider =
-    StateNotifierProvider<PreReqsEditingNotifier, PreReqsEditingState>(
-        (ref) {
+    StateNotifierProvider<PreReqsEditingNotifier, PreReqsEditingState>((ref) {
   final previousPreReqsState = ref.read(currentCourseProvider).preReqs;
   var retval = PreReqsEditingNotifier(ref, previousPreReqsState);
 
-  
   return retval;
 });
+
+final colorPalleteProvider = Provider<dynamic>((ref) {
+  return colorsList;
+});
+
+var colorsList = [
+  Colors.red,
+  Colors.red.shade100,
+  Colors.red.shade500,
+  Colors.deepOrange.shade100,
+  Colors.deepOrange.shade500,
+  Colors.redAccent,
+  Colors.blueGrey.shade200,
+  Colors.greenAccent,
+  Colors.lightBlueAccent,
+  Colors.cyanAccent,
+  Colors.deepPurpleAccent,
+  Colors.lightGreenAccent,
+  Colors.indigoAccent,
+  Colors.pinkAccent,
+  Colors.tealAccent,
+  Colors.cyanAccent,
+  Colors.limeAccent,
+  Colors.pinkAccent,
+  Colors.amberAccent
+];

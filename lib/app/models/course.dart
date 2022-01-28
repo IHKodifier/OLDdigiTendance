@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:equatable/equatable.dart';
 
 class Course extends Equatable {
+  late DocumentReference? docRef;
   String? courseId;
   String? courseTitle;
   int? credits;
@@ -13,14 +15,15 @@ class Course extends Equatable {
     this.courseId,
     this.courseTitle,
     this.credits,
-    // ignore: avoid_init_to_null
     this.preReqs,
     List<Session?>? sessions,
+    this.docRef,
   });
-  Course.fromData(Map<String, dynamic> data) {
+  Course.fromData(Map<String, dynamic> data, [DocumentReference? docRef]) {
     courseId = data['courseId'];
     courseTitle = data['courseTitle'];
     // preReqs = data['preReqs'];
+    this.docRef = docRef;
     preReqs = [];
     credits = data['credits'];
     // var x = data['preReqs'];
@@ -31,6 +34,10 @@ class Course extends Equatable {
   @override
   String toString() {
     return '''courseId: $courseId, courseTitle: $courseTitle Credits: ${credits.toString()}, number of preReqs: ${preReqs!.length}
+    Course DocumentReference = 
+    Doc Id = ${docRef?.id}
+    Doc parent  = ${docRef?.parent.toString()}
+    Doc path =${docRef?.path}
     number of Sessions: ${sessions!.length}
     PREREQS
      ${preReqs!.map((e) => e.courseId.toString())}
@@ -81,6 +88,7 @@ class Course extends Equatable {
         courseTitle: courseTitle ?? this.courseTitle,
         credits: credits ?? this.credits,
         preReqs: preReqs ?? this.preReqs,
+        docRef: docRef ?? this.docRef,
         sessions: sessions ?? this.sessions);
   }
 }

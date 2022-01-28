@@ -57,8 +57,6 @@ class FirestoreApi {
     Utils.log(
         'Institution set to ${institution.title} with firestore Document reference equal to ${notifier.docRef.toString()}');
 
-    // querySnapshot.then((value) => value.docs[0].reference.parent.parent.toString())
-
     return userQuerySnapshot;
 
     //     .collection('appUsers')
@@ -86,12 +84,25 @@ class FirestoreApi {
   }
 
   Future<DocumentReference> addNewCourse(Course course) {
-    ///TODO add institutionalized scope saving 
-    // final institution = 
+    ///TODO add institutionalized scope saving
+    // final institution =
 
     return instance
         .collection('courses')
         .add(course.toMap())
         .then((value) => value);
   }
+
+  // Future<DocumentReference<Map<String, dynamic>>?> getCourseDocRef(
+  //     DocumentReference<Map<String, dynamic>>? insitutionDocRef,
+  //     String courseId) async {
+  //   var snapshot = await instance
+  //       .collection('institutions')
+  //       .doc(institutionDocRef!.path)
+  //       .collection('courses')
+  //       .where('courseId', isEqualTo: courseId)
+  //       .get()
+  //       .then((value) => value.docs[0].reference);
+  //   return snapshot;
+  // }
 }

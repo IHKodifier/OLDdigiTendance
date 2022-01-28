@@ -7,14 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CourseNotifier extends StateNotifier<Course> {
   final ProviderRefBase ref;
   CourseNotifier(state, this.ref) : super(state);
+  DocumentReference? get docRef => state.docRef;
 
-  void setPreReqsonCourse(QuerySnapshot<Map<String, dynamic>> data) {
-    data.docs.forEach((element) {
-      state.preReqs!.add(Course.fromData(element.data()));
-      Utils.log(
-          'added ${element.data().toString()} to selected Course\'s preREQs ');
-    });
-  }
+  // void setPreReqsonCourse(QuerySnapshot<Map<String, dynamic>> data) {
+  //   data.docs.forEach((element) {
+  //     state.preReqs!.add(Course.fromData(element.data()));
+  //     Utils.log(
+  //         'added ${element.data().toString()} to selected Course\'s preREQs ');
+  //   });
+  // }
 
   void setSessiononCourseProvider(QuerySnapshot<Map<String, dynamic>> data) {
     state.sessions!.clear();
@@ -28,14 +29,13 @@ class CourseNotifier extends StateNotifier<Course> {
     });
   }
 
-  void removePreReq(Course courseElement) {
-    final newState = state.copyWith();
-    if (newState.preReqs!.isNotEmpty) {
-      if (newState.preReqs!.contains(courseElement)) {
-        newState.preReqs!.remove(courseElement);
-      }
-      state = newState;
-    }
-  }
+  // void removePreReq(Course courseElement) {
+  //   final newState = state.copyWith();
+  //   if (newState.preReqs!.isNotEmpty) {
+  //     if (newState.preReqs!.contains(courseElement)) {
+  //       newState.preReqs!.remove(courseElement);
+  //     }
+  //     state = newState;
+  //   }
+  // }
 }
-/// just another commit to come out pf remote push cancelled syndro

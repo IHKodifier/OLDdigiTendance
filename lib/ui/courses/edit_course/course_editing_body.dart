@@ -2,9 +2,6 @@ import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/states/prereqs_editing_state.dart';
-import 'package:digitendance/ui/courses/edit_course/prereqs_editing_widget.dart';
-import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -66,7 +63,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         child: Scrollbar(
             child: SingleChildScrollView(
@@ -222,8 +219,11 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     //TODO.... do the form saving to firestore stuff
 
     if (formIsModified) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text('form is M o d i f i e d')));
+      editedCourse.docRef = unTouchedCourse.docRef;
+      Utils.log(unTouchedCourse.docRef.toString());
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'form is M o d i f i e d and courseRef equals ${editedCourse.docRef?.path.toString()}')));
     } else {
       Utils.log('form Does NOT has unsaved Changes');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -236,10 +236,9 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
         context: context,
         builder: (context) => AlertDialog(
               title: Row(
-                children: [
-                  const Icon(Icons.info_outline,
-                      size: 60, color: Colors.deepOrange),
-                  const Text('Warning'),
+                children: const [
+                  Icon(Icons.info_outline, size: 60, color: Colors.deepOrange),
+                  Text('Warning'),
                 ],
               ),
               content: Text(
@@ -292,20 +291,32 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
             textAlign: TextAlign.center,
           ),
           actions: [
-            TextButton(
-                onPressed: () {
-                  setState(() {
-                    editedCourse.nullify();
-                  });
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: const Text('Yes')),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('No')),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        setState(() {
+                          editedCourse.nullify();
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Yes')),
+               
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('No')),
+               
+               
+                ],
+              ),
+            ),
+           
           ],
         ),
       );
