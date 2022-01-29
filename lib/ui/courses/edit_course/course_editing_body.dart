@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/providers.dart';
@@ -23,7 +24,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   AsyncValue? asyncAllCourses;
 
   Course editedCourse = Course();
-  late final unTouchedCourse;
+  late final Course unTouchedCourse;
   late GlobalKey<FormState> _formKey;
   bool get formIsModified => editedCourse != unTouchedCourse;
 
@@ -73,14 +74,14 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   _buildAllTextFields(),
                   _buildSelectedCoursesFlex(removeFromSelected),
                   _buildAvailableCoursesFlex(addToSelection),
                   // PreReqsEditingWidget(),
                   // SessionsEditorWidget(),
                   // buildButtons(),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   _buildButtonBar()
@@ -169,7 +170,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Spacer(
+        const Spacer(
           flex: 2,
         ),
         TextButton(
@@ -179,14 +180,14 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
               'Cancel',
               style: TextStyle(fontSize: 24),
             )),
-        Spacer(flex: 1),
+        const Spacer(flex: 1),
         TextButton(
             onPressed: onReset,
             child: const Text(
               'RESET',
               style: TextStyle(fontSize: 24),
             )),
-        Spacer(flex: 1),
+        const Spacer(flex: 1),
         ElevatedButton.icon(
             onPressed: onSave,
             icon: const Icon(Icons.save),
@@ -194,7 +195,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
               'Save',
               style: TextStyle(fontSize: 24),
             )),
-        Spacer(
+        const Spacer(
           flex: 2,
         ),
       ],
@@ -224,10 +225,13 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
               'form is M o d i f i e d and courseRef equals ${editedCourse.docRef?.path.toString()}')));
+      FirebaseFirestore.instance
+          .doc(editedCourse.docRef!.path)
+          .set(editedCourse.toMap(), SetOptions(merge: true));
     } else {
       Utils.log('form Does NOT has unsaved Changes');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text('form is       N   O   T      Modified')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('form is       N   O   T      Modified')));
     }
   }
 
@@ -241,7 +245,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                   Text('Warning'),
                 ],
               ),
-              content: Text(
+              content: const Text(
                   'All data in the form will bereset to its original .\n Are you sure...?'),
               actions: [
                 TextButton(
@@ -305,18 +309,14 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                         Navigator.pop(context);
                       },
                       child: const Text('Yes')),
-               
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('No')),
-               
-               
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('No')),
                 ],
               ),
             ),
-           
           ],
         ),
       );
@@ -330,15 +330,38 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   Widget _buildSelectedCoursesFlex(Function action) {
     final PreReqsEditingNotifier notifier =
         ref.read(preReqsEditingProvider.notifier);
+    int selectedPreReqsLegth;
+    if (editedCourse.preReqs == null) {
+      selectedPreReqsLegth = unTouchedCourse.preReqs!.length;
+    } else {
+      selectedPreReqsLegth = editedCourse.preReqs!.length;
+    }
+
     return Flexible(
       fit: FlexFit.loose,
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: selectedCourses.map((e) => _buildChip(e, action)).toList(),
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Pre Requisites (' +
+                  selectedPreReqsLegth.toString() +
+                  ')',
+              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                  fontSize: 20, color: Theme.of(context).primaryColor),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children:
+                  selectedCourses.map((e) => _buildChip(e, action)).toList(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -347,7 +370,11 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     Function action,
   ) {
     return asyncAllCourses!.when(
-      error: (error, stackTrace, ) => const Text('error encountered'),
+      error: (
+        error,
+        stackTrace,
+      ) =>
+          const Text('error encountered'),
       loading: () => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
@@ -372,18 +399,39 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
         var setDiff = set1.difference(set2);
         Utils.log(setDiff.length.toString());
         availableCourses = List.from(setDiff);
-
+        int availablePreReqsLegth;
+        if (editedCourse.preReqs == null) {
+          availablePreReqsLegth = unTouchedCourse.preReqs!.length;
+        } else {
+          availablePreReqsLegth = editedCourse.preReqs!.length;
+        }
         return Flexible(
           fit: FlexFit.loose,
-          child: Container(
-            padding: EdgeInsets.all(8),
-            // color: Colors.blueGrey[50],
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children:
-                  availableCourses.map((e) => _buildChip(e!, action)).toList(),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Pre Requisites Available to add (' +
+                      availablePreReqsLegth.toString() +
+                      ' available)',
+                  style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                      fontSize: 20, color: Theme.of(context).primaryColor),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                // color: Colors.blueGrey[50],
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: availableCourses
+                      .map((e) => _buildChip(e!, action))
+                      .toList(),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -393,10 +441,10 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   Widget _buildChip(Course e, Function action) {
     return ActionChip(
       elevation: 10,
-      labelPadding: EdgeInsets.all(8),
+      labelPadding: const EdgeInsets.all(8),
       backgroundColor: Colors.white,
       avatar: CircleAvatar(
-        backgroundColor: Theme.of(context).accentColor,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         // minRadius: 200,
         radius: 250,
         child: Padding(
@@ -404,7 +452,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
           child: FittedBox(
             child: Text(
               e.courseId!,
-              style: TextStyle(
+              style: const TextStyle(
                   // fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),
@@ -413,7 +461,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       ),
       label: Text(
         e.courseTitle!,
-        style: TextStyle(fontSize: 18, color: Colors.black54),
+        style: const TextStyle(fontSize: 18, color: Colors.black54),
       ),
       onPressed: () {
         action(e);
