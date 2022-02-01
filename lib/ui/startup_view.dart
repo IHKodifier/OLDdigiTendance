@@ -19,8 +19,8 @@ class StartupView extends ConsumerWidget {
     final _stream = ref.read(currentAuthUserProvider);
     return _stream.when(
       data: (data) => _handleWhenData(data, ref),
-      loading: (data) => Center(child: CircularProgressIndicator()),
-      error: (val, st, data) => Text('error'),
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (val, st, ) => Text('error'),
     );
   }
 

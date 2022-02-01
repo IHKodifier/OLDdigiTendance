@@ -16,7 +16,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   AppUser? appUser;
   User? user;
   AuthApi? authApi;
-  ProviderRefBase thisref;
+  StateNotifierProviderRef<AuthNotifier, AuthState> thisref;
 
   Future<void> login({
     required LoginProvider loginProvider,
@@ -35,7 +35,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   setUserInAuthState(User? user) async {
     //TODO transform to AppUser and set then set state
     final firestoreService = thisref.watch(firestoreApiProvider);
-    var data = await firestoreService.getAppUserDoc(userId: user!.email,refBase: thisref);
+    var data = await firestoreService.getAppUserDoc(
+        userId: user!.email, refBase: thisref);
     AppUser appUser = AppUser.fromJson(data.docs[0].data(), user.email);
     // appUser = AppUser.fromFirebaseUser(user!);
     // final authstate = thisref.watch(authStateProvider);

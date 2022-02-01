@@ -20,12 +20,12 @@ class LoginView extends ConsumerWidget {
     // final authState = ref.watch(authStateProvider);
     // final notifier = ref.read(authStateProvider.notifier);
 
-    return stream.when(error: (e, st, data) {
+    return stream.when(error: (e, st, ) {
       return Container(
         height: 50,
         color: Colors.blue,
       );
-    }, loading: (data) {
+    }, loading: () {
       return Center(child: CircularProgressIndicator());
     }, data: (data) {
       return _haandleUserInData(data);
@@ -98,13 +98,13 @@ class _LoginForm extends ConsumerWidget {
     // ignore: unused_local_variable
 
     return stream.when(
-      error: (e, st, data) {
+      error: (e, st, ) {
         return Container(
           height: 50,
           color: Colors.blue,
         );
       },
-      loading: (data) {
+      loading: () {
         return CircularProgressIndicator();
       },
       data: (data) {

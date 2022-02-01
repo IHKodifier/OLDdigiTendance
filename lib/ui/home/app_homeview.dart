@@ -26,11 +26,11 @@ class AppHomeView extends ConsumerWidget {
     );
   }
 
-  Widget onError(error, st, user) {
+  Widget onError(error, st, ) {
     return Center(child: Text('error ${error.toString()}'));
   }
 
-  Widget onLoading(user) {
+  Widget onLoading() {
     return Center(child: CircularProgressIndicator());
   }
 

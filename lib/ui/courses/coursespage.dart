@@ -24,8 +24,8 @@ class CoursesPage extends ConsumerWidget {
       ),
       body: courses.when(
         data: (data) => CoursesList(data: data),
-        error: (e, st, data) => Center(child: Text(e.toString())),
-        loading: (_) => const Center(child: CircularProgressIndicator()),
+        error: (e, st, ) => Center(child: Text(e.toString())),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

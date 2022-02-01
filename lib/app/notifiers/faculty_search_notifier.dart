@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FacultySearchNotifier extends StateNotifier<FacultySearchState> {
   FacultySearchNotifier(FacultySearchState state, this.ref) : super(state);
-  final ProviderRefBase ref;
+  final StateNotifierProviderRef<FacultySearchNotifier, FacultySearchState> ref;
 
   Future<void> searchFaculty(String queryString) async {
     final course = ref.watch(currentCourseProvider);
