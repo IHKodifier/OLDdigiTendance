@@ -3,6 +3,7 @@ import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -79,7 +80,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                   _buildSelectedCoursesFlex(removeFromSelected),
                   _buildAvailableCoursesFlex(addToSelection),
                   // PreReqsEditingWidget(),
-                  // SessionsEditorWidget(),
+                  SessionsEditorWidget(),
                   // buildButtons(),
                   const SizedBox(
                     height: 20,
@@ -345,9 +346,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Pre Requisites (' +
-                  selectedPreReqsLegth.toString() +
-                  ')',
+              'Pre Requisites (' + selectedPreReqsLegth.toString() + ')',
               style: Theme.of(context).textTheme.bodyText1!.copyWith(
                   fontSize: 20, color: Theme.of(context).primaryColor),
             ),
