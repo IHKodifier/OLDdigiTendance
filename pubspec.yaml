@@ -38,6 +38,7 @@ dependencies:
   firebase_core: ^1.7.0
   # flutter_riverpod: 1.0.0-dev.10
   flutter_riverpod: 1.0.3
+  flutter_hooks: 
   equatable: ^2.0.3
   font_awesome_flutter:
   focused_menu: ^1.0.5

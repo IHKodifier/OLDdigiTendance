@@ -67,8 +67,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: SizedBox(
         width: double.infinity,
-        child: Scrollbar(
-            child: SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Form(
               key: _formKey,
               child: Column(
@@ -85,10 +84,13 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                   const SizedBox(
                     height: 20,
                   ),
-                  _buildButtonBar()
+                  _buildButtonBar(),
+                  const SizedBox(
+                    height: 40,
+                  ),
                 ],
               )),
-        )),
+        ),
       ),
     );
   }
