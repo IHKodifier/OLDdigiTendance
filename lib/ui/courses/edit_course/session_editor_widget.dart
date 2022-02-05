@@ -1,8 +1,8 @@
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/edit_course/new_session_form.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SessionsEditorWidget extends ConsumerWidget {
@@ -43,7 +43,16 @@ class SessionsEditorWidget extends ConsumerWidget {
       child: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
-              context: thisContext, builder: (_) => NewSessionForm());
+            context: thisContext,
+            builder: (_) => NewSessionForm(),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(40),
+              ),
+            ),
+          );
+
+          // isScrollControlled: true);
         },
         child: const Icon(Icons.add),
       ),
@@ -93,47 +102,6 @@ class SessionsEditorWidget extends ConsumerWidget {
       },
     );
   }
-}
-
-class NewSessionForm extends HookWidget {
-  NewSessionForm({Key? key}) : super(key: key);
-
-  late final titleHook = useTextEditingController();
-  late final idHook = useTextEditingController();
-  late final _formKey = GlobalKey<FormState>();
-
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return Container(
-      child: Container(
-        // width: MediaQuery.of(context).size.width*.65,
-        padding: const EdgeInsets.symmetric(horizontal: 256),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              buildId(),
-              // buildTitle(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildId() => Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: TextFormField(
-          decoration: const InputDecoration(
-            hintText: 'Please enter a Session Id',
-            label: Text('session Id'),
-          ),
-          controller: idHook,
-          onSaved: (newValue) {},
-        ),
-  );
 }
 
 class SessionCard extends StatelessWidget {

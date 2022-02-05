@@ -26,6 +26,7 @@ class App extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.purple,
         ),
+        // .useMaterial3,
         // home: const AppHomePage(title: 'DigiTendance'),
         home:  StartupView(),
       ),

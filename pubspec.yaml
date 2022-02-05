@@ -40,6 +40,7 @@ dependencies:
   flutter_riverpod: 1.0.3
   flutter_hooks: 
   equatable: ^2.0.3
+  intl: 
   font_awesome_flutter:
   focused_menu: ^1.0.5
   flutter_typeahead: ^3.2.3
