@@ -44,7 +44,7 @@ class SearchApi {
           .where('firstName', isGreaterThanOrEqualTo: startRange)
           .where('firstName', isLessThan: endRange)
           .get();
-      retval = results.docs.map((e) => Faculty.fromMap(e.data())).toList();
+      retval = results.docs.map((e) => Faculty.fromMap(e.data(),e.reference)).toList();
     } catch (e) {
       Utils.log(e.toString());
     }
@@ -61,7 +61,7 @@ class SearchApi {
           .where('userId', isGreaterThanOrEqualTo: query[0].toUpperCase())
           .where('userId', isLessThan: String.fromCharCode(ascii + 1))
           .get();
-      retval = results.docs.map((e) => Faculty.fromMap(e.data())).toList();
+      retval = results.docs.map((e) => Faculty.fromMap(e.data(),e.reference)).toList();
     } catch (e) {
       Utils.log(e.toString());
     }

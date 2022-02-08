@@ -56,7 +56,7 @@ class FacultySearchNotifier extends StateNotifier<FacultySearchState> {
         .get()
         .then((value) {
       value.docs.forEach((element) {
-        state.add(Faculty.fromMap(element.data()));
+        state.add(Faculty.fromMap(element.data(),element.reference));
       });
     });
   }

@@ -37,22 +37,22 @@ class SessionsEditorWidget extends ConsumerWidget {
   Widget onData(data) {
     var element = Card(
       shape: RoundedRectangleBorder(
-        // side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
+          showDialog(
             context: thisContext,
-            builder: (_) => NewSessionForm(),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(40),
-              ),
-            ),
-          );
+            builder: (_) => const Dialog(
+             elevation: 15,
+             insetAnimationDuration: Duration(milliseconds: 999),
+             insetAnimationCurve: Curves.bounceIn,
+             child: NewSessionForm(),
 
-          // isScrollControlled: true);
+
+            ),
+           
+          );
         },
         child: const Icon(Icons.add),
       ),
