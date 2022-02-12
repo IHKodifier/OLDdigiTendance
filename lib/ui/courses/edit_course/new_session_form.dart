@@ -1,4 +1,5 @@
 import 'package:digitendance/app/models/faculty.dart';
+import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/ui/courses/edit_course/faculty_list.dart';
 import 'package:digitendance/ui/shared/faculty_avatar.dart';
 import 'package:digitendance/ui/shared/spaers.dart';
@@ -19,9 +20,13 @@ class _State extends ConsumerState<NewSessionForm> {
   late final _formKey = GlobalKey<FormState>();
   DateTime? regStartDate;
   DateTime? regEndDate;
+  DateTime? sessionStartDate;
+  DateTime? sessionEndDate;
   TimeOfDay? regEndTime;
   String? endDateString = 'Select Date & Time ';
+  // String sessio
   Faculty? facultySelected;
+  List<bool> tutoringDays = [false, false, false, false, false];
 
   @override
   void initState() {
@@ -45,18 +50,140 @@ class _State extends ConsumerState<NewSessionForm> {
             children: [
               buildFormTitle(context),
               buildTextIputCard(),
-              // buildId(),
-              // buildTitle(),
-              const SpacerVertical(8),
+
+              const SpacerVertical(4),
+
               buildRegDates(context),
-              const SpacerVertical(8),
-              buildFacultySelectionCard(context),
+              const SpacerVertical(4),
+              // buildFacultySelectionCard(context),
+              buildSessionCalendarCard(context),
+              const SpacerVertical(16),
               buildButtonBar(context),
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
+              const SpacerVertical(20),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildSessionCalendarCard(BuildContext context) {
+    return Card(
+      elevation: 20,
+      margin: const EdgeInsets.symmetric(horizontal: 96, vertical: 8),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Session Calendar ',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(color: Theme.of(context).primaryColor),
+            ),
+          ),
+          // const SpacerVertical(4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: buildSessionStart(context)),
+              Expanded(child: buildSessionEnd(context)),
+              const SpacerVertical(4),
+            ],
+          ),
+          const SpacerVertical(8),
+          buildWeekdayChoices(),
+          const SpacerVertical(8),
+        ],
+      ),
+    );
+
+// Card(
+//       elevation: 20,
+//       child: SfCalendar(
+//         view: CalendarView.week,
+//         firstDayOfWeek: 1,
+//       ));
+  }
+
+  buildWeekdayChoices() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text('Tutoring Calendar'),
+        ),
+        Wrap(
+          spacing: 16,
+          children: [
+            ChoiceChip(
+              padding: const EdgeInsets.all(4),
+              selectedColor:
+                  Theme.of(context).colorScheme.secondary.withOpacity(.7),
+              pressElevation: 15,
+              label: const Text('M'),
+              selected: tutoringDays[0],
+              onSelected: (value) {
+                tutoringDays[0] = value;
+                setState(() {});
+              },
+            ),
+            ChoiceChip(
+              padding: const EdgeInsets.all(8),
+              selectedColor:
+                  Theme.of(context).colorScheme.secondary.withOpacity(.7),
+              pressElevation: 15,
+              label: const Text('T'),
+              selected: tutoringDays[1],
+              onSelected: (value) {
+                tutoringDays[1] = value;
+                setState(() {});
+              },
+            ),
+            ChoiceChip(
+              padding: const EdgeInsets.all(8),
+              selectedColor:
+                  Theme.of(context).colorScheme.secondary.withOpacity(.7),
+              pressElevation: 15,
+              label: const Text('W'),
+              selected: tutoringDays[2],
+              onSelected: (value) {
+                tutoringDays[2] = value;
+                setState(() {});
+              },
+            ),
+            ChoiceChip(
+              padding: const EdgeInsets.all(8),
+              selectedColor:
+                  Theme.of(context).colorScheme.secondary.withOpacity(.7),
+              pressElevation: 15,
+              label: const Text('T'),
+              selected: tutoringDays[3],
+              onSelected: (value) {
+                tutoringDays[3] = value;
+                Utils.log(tutoringDays.toString());
+                setState(() {});
+              },
+            ),
+            ChoiceChip(
+              padding: const EdgeInsets.all(8),
+              selectedColor:
+                  Theme.of(context).colorScheme.secondary.withOpacity(.7),
+              pressElevation: 15,
+              label: const Text('F'),
+              selected: tutoringDays[4],
+              onSelected: (value) {
+                tutoringDays[4] = value;
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -65,7 +192,7 @@ class _State extends ConsumerState<NewSessionForm> {
     /// https://media-exp1.licdn.com/dms/image/C4D03AQEz30XNSb3Rvw/profile-displayphoto-shrink_200_200/0/1516899914494?e=1647475200&v=beta&t=ISMZPJwbuxbY5cHXaLhJpLewW9q8A2YmT5uUqjcX5HM
     ///
     return Card(
-      elevation: 20,
+      elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 96, vertical: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -77,15 +204,15 @@ class _State extends ConsumerState<NewSessionForm> {
                 ),
           ),
           const SpacerVertical(4),
-          facultySelected!=null
+          facultySelected != null
               ? FacultyAvatar(faculty: facultySelected)
-              : FacultyAvatarBlank(),
+              : buildBlankFaculty(),
         ],
       ),
     );
   }
 
-  buildTextIputCard() {
+  Widget buildTextIputCard() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 96),
       elevation: 20,
@@ -121,7 +248,8 @@ class _State extends ConsumerState<NewSessionForm> {
               // const SpacerVertical(8),
             ],
           ),
-          const SpacerVertical(8),
+          const SpacerVertical(16),
+          buildFacultySelectionCard(context),
         ],
       ),
     );
@@ -163,6 +291,31 @@ class _State extends ConsumerState<NewSessionForm> {
           flex: 2,
         ),
       ],
+    );
+  }
+
+  buildBlankFaculty() {
+    return SizedBox(
+      width: 400,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: InkWell(
+          onTap: _showSimpleDialog,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const [
+              Text('Select Faculty'),
+              Icon(
+                Icons.account_circle,
+                size: 80,
+
+                color: Color.fromARGB(255, 117, 118, 119),
+                // child: const Center(child: Text('select Faculty')),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -237,7 +390,7 @@ class _State extends ConsumerState<NewSessionForm> {
                         ?.copyWith(color: Theme.of(context).primaryColor),
                   )
                 : const Icon(Icons.calendar_today_outlined),
-            onTap: () => _datePicker(context),
+            onTap: () => _datePicker_Registration(context),
           ),
         ],
       ),
@@ -274,7 +427,76 @@ class _State extends ConsumerState<NewSessionForm> {
     );
   }
 
-  _datePicker(BuildContext context) async {
+  Widget buildSessionStart(BuildContext context) {
+    return Container(
+      child: Card(
+        // color: const Color.fromARGB(137, 172, 166, 166),
+        elevation: 3,
+        margin: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              ' starts on ',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.w400, fontSize: 16),
+            ),
+            // const SizedBox(width: 20),
+            const SpacerVertical(8),
+            InkWell(
+              child: sessionStartDate != null
+                  ? Text(
+                      regStartDate != null
+                          ? DateFormat.yMMMEd('en-US').format(sessionStartDate!)
+                          : 'Select Date',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(color: Theme.of(context).primaryColor),
+                    )
+                  : const Icon(Icons.calendar_today_outlined),
+              onTap: () => _datePicker_SessionStart(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSessionEnd(BuildContext context) {
+    //  endDate==null?
+
+    return Card(
+      elevation: 3,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text(
+            ' Ends on ',
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 16),
+          ),
+          const SpacerVertical(8),
+          InkWell(
+            child: sessionEndDate != null
+                ? Text(DateFormat.yMMMEd('en-US').format(sessionEndDate!),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(color: Theme.of(context).primaryColor))
+                : const Icon(Icons.calendar_today_rounded),
+            onTap: () => _datePicker_SessionEnd(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _datePicker_Registration(BuildContext context) async {
     final newDate = await showDatePicker(
       context: context,
       initialDate: regStartDate ?? DateTime.now(),
@@ -284,6 +506,38 @@ class _State extends ConsumerState<NewSessionForm> {
     setState(() {
       regStartDate = newDate;
     });
+  }
+
+  _datePicker_SessionStart(BuildContext context) async {
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: regStartDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (newDate != null) {
+      setState(() {
+        sessionStartDate = newDate;
+      });
+    } else {
+      return;
+    }
+  }
+
+  _datePicker_SessionEnd(BuildContext context) async {
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: regStartDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (newDate != null) {
+      setState(() {
+        sessionEndDate = newDate;
+      });
+    } else {
+      return;
+    }
   }
 
   _dateAndTimePicker(BuildContext context) async {

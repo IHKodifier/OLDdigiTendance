@@ -1,4 +1,5 @@
 import 'package:digitendance/app/models/faculty.dart';
+import 'package:digitendance/app/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 
@@ -49,19 +50,30 @@ class FacultyAvatarBlank extends StatelessWidget {
           ),
         ),
       ),
-      onTap: () {
-        showDialog(
+      onTap: () async {
+        var value = await showDialog(
           context: context,
-          builder: (context) => const SimpleDialog(
-            title: Text('Select Faculty'),
+          builder: (context) => SimpleDialog(
+            title: const Text('Select Faculty'),
             children: [
-              Text('One '),
-                            Text('Two  '),
-              Text('Three '),
-
+              SimpleDialogOption(
+                  child: const ListTile(
+                    title: Text('One'),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, 'One');
+                  }),
+              SimpleDialogOption(
+                  child: const ListTile(
+                    title: Text('Two'),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, 'Two');
+                  }),
             ],
           ),
         );
+        Utils.log('$value was selected by user');
       },
     );
   }

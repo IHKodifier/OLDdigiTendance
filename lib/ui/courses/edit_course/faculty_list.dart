@@ -61,7 +61,7 @@ class FacultyLisTile extends StatelessWidget {
     // Navigator.pop
     return Material(
       child: SimpleDialogOption(
-        child: Text(e.title! + ' ' + e.firstName! + ' ' + e.lastName!),
+        child: Text(e.title! + ' ' + e.firstName! + ' ' + e.lastName),
         padding: const EdgeInsets.all(8),
         // subtitle: Text(e.title!),
       ),

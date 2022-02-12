@@ -51,7 +51,9 @@ dependencies:
   syncfusion_flutter_pdf: ^19.3.57-beta
   # syncfusion_flutter_datepicker: ^19.3.57
   syncfusion_flutter_signaturepad: ^19.3.57
-  freezed_annotation:
+  syncfusion_flutter_calendar: 
+  # freezed_annotation:
+  # intl:
 
 dev_dependencies:
   flutter_test:

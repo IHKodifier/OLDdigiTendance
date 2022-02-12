@@ -1,4 +1,3 @@
-import 'package:digitendance/ui/home/app_homeview.dart';
 import 'package:digitendance/ui/startup_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +27,13 @@ class App extends StatelessWidget {
         ),
         // .useMaterial3,
         // home: const AppHomePage(title: 'DigiTendance'),
-        home:  StartupView(),
+        // themeMode: ThemeMode.dark,
+        // darkTheme: ThemeData.dark().copyWith(
+        //   scaffoldBackgroundColor: Colors.black87,
+        //   colorScheme:
+        //       ColorScheme.fromSwatch().copyWith(secondary: Colors.purple),
+        // ),
+        home: StartupView(),
       ),
     );
   }
