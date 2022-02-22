@@ -1,8 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
+import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/edit_course/new_session_form.dart';
 import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +28,12 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
 
   Course editedCourse = Course();
   late final Course unTouchedCourse;
+  late CourseEditingNotifier courseEditingNotifier;
   late GlobalKey<FormState> _formKey;
   bool get formIsModified => editedCourse != unTouchedCourse;
+  bool get hasNewSession =>
+      (editedCourse.sessions!.length > unTouchedCourse.sessions!.length);
+  bool get formNeedsSaving => formIsModified || hasNewSession;
 
   @override
   void initState() {
@@ -36,12 +42,15 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     ///TODO do custom initialozation logic below super call
     // state = ref.watch(courseEditingProvider);
     asyncAllCourses = ref.read(allCoursesProvider);
-    unTouchedCourse = ref.read(currentCourseProvider).copyWith();
+    unTouchedCourse = ref.read(currentCourseProvider);
     selectedCourses = ref
         .read(currentCourseProvider)
         .copyWith(preReqs: ref.read(currentCourseProvider).preReqs)
         .preReqs!
         .toList();
+    editedCourse = ref.read(courseEditingProvider);
+    courseEditingNotifier = ref.read(courseEditingProvider.notifier);
+    editedCourse = courseEditingNotifier.cloneFrom(unTouchedCourse);
   }
 
   _buildAllTextFields() {
@@ -62,6 +71,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     _formKey = GlobalKey<FormState>();
 
     initiateTextControllers();
+    final newSession = ref.watch(newSessionProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -79,7 +89,11 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                   _buildSelectedCoursesFlex(removeFromSelected),
                   _buildAvailableCoursesFlex(addToSelection),
                   // PreReqsEditingWidget(),
-                  SessionsEditorWidget(),
+                  Consumer(
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) =>
+                            SessionsEditorWidget(),
+                  ),
                   // buildButtons(),
                   const SizedBox(
                     height: 20,
@@ -217,24 +231,33 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   }
 
   onSave() {
+    //validate TexFields before saving
     _formKey.currentState!.validate();
+    //prep [editedCourse] for saving
+    courseEditingNotifier.setCourseEditingState(editedCourse);
     _formKey.currentState!.save();
     editedCourse.preReqs = selectedCourses;
-    //TODO.... do the form saving to firestore stuff
 
-    if (formIsModified) {
-      editedCourse.docRef = unTouchedCourse.docRef;
-      Utils.log(unTouchedCourse.docRef.toString());
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              'form is M o d i f i e d and courseRef equals ${editedCourse.docRef?.path.toString()}')));
-      FirebaseFirestore.instance
-          .doc(editedCourse.docRef!.path)
-          .set(editedCourse.toMap(), SetOptions(merge: true));
+    //add sessions to [editedCourse]
+    editedCourse.sessions = ref
+        .read(sessionListProvider)
+        .value!
+        .docs
+        .map((e) => Session.fromData(e.data()))
+        .toList();
+    editedCourse.sessions!.insert(0, ref.read(newSessionProvider));
+
+    if (formNeedsSaving) {
+      if (hasNewSession) {
+        _addNewSessionInFirestore();
+      } else {
+        //  no new sessions to write to firestore
+      }
+      if (formIsModified) {
+        _updateCourseInFirestore();
+      } else {}
     } else {
-      Utils.log('form Does NOT has unsaved Changes');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('form is       N   O   T      Modified')));
+      Utils.log('form does not need saving');
     }
   }
 
@@ -496,6 +519,26 @@ availableCourses length =${availableCourses.length.toString()}
     });
     if (!selectedCourses.contains(e)) {
       selectedCourses.add(e);
+    }
+  }
+
+  void _updateCourseInFirestore() {
+    Utils.log('Updating Course in Firestore');
+  }
+
+  void _addNewSessionInFirestore() {
+    Utils.log('adding sessions in Firestore');
+
+    for (var session in editedCourse.sessions!) {
+      if (unTouchedCourse.sessions!.contains(session)) {
+        //do not add in firestore
+
+      } else {
+        //write this new session to firestore
+        ref
+            .read(firestoreApiProvider)
+            .addSessionToCourse(session, editedCourse.docRef);
+      }
     }
   }
 }

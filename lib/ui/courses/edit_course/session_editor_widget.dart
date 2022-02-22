@@ -14,6 +14,7 @@ class SessionsEditorWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     thisContext = context;
+    final newSessions = ref.watch(newSessionProvider);
     final sessionList = ref.watch(sessionListProvider);
     return sessionList.when(
       data: onData,
@@ -35,7 +36,7 @@ class SessionsEditorWidget extends ConsumerWidget {
   }
 
   Widget onData(data) {
-    var element = Card(
+    var newSessionFAB = Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -44,14 +45,11 @@ class SessionsEditorWidget extends ConsumerWidget {
           showDialog(
             context: thisContext,
             builder: (_) => const Dialog(
-             elevation: 15,
-             insetAnimationDuration: Duration(milliseconds: 999),
-             insetAnimationCurve: Curves.bounceIn,
-             child: NewSessionForm(),
-
-
+              elevation: 15,
+              insetAnimationDuration: Duration(milliseconds: 999),
+              insetAnimationCurve: Curves.easeIn,
+              child: NewSessionForm(),
             ),
-           
           );
         },
         child: const Icon(Icons.add),
@@ -60,10 +58,27 @@ class SessionsEditorWidget extends ConsumerWidget {
     return Consumer(
       builder: (context, ref, child) {
         _providedSessionList = ref.watch(currentCourseProvider).sessions;
+        var newSessionNotifier = ref.watch(newSessionProvider.notifier);
+        var newSession = ref.read(newSessionProvider);
+        var courseEditingNotifier = ref.read(courseEditingProvider.notifier);
         List<Widget> sessionsListWrap = [];
-        sessionsListWrap.insert(0, element);
+        sessionsListWrap.insert(0, newSessionFAB);
+// if (newSession.sessionId!=null) {
+//   sessionsListWrap.insert(1, SessionCard(e: newSession));
+// }
+
+
+
+        
         for (var item in _providedSessionList!) {
           sessionsListWrap.add(SessionCard(e: item!));
+        }
+
+        /// if [newSessionProvider] is not null, add it to the session Wrap widget
+        /// at index 1 so it is always after add Button
+
+        if (newSessionNotifier.state.sessionId != null) {
+          sessionsListWrap.insert(1, SessionCard(e: newSessionNotifier.state));
         }
 
         // _providedSessionList!.map((e) => SessionCard(e: e!)).toList();
@@ -93,6 +108,7 @@ class SessionsEditorWidget extends ConsumerWidget {
                 height: 220,
                 width: MediaQuery.of(context).size.width * .40,
                 child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: sessionsListWrap,
                 ),
               ),
@@ -115,7 +131,7 @@ class SessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+        side: BorderSide(color: Theme.of(context).primaryColor, width: 0.5),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Container(
@@ -127,11 +143,11 @@ class SessionCard extends StatelessWidget {
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12))),
           title: Text(
-            e.sessionId,
+            e.sessionId!,
             style: TextStyle(color: Theme.of(context).primaryColor),
           ),
           subtitle: Text(
-            e.sessionTitle,
+            e.sessionTitle!,
             style: TextStyle(color: Theme.of(context).primaryColor),
           ),
         ),

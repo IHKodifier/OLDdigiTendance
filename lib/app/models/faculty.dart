@@ -12,12 +12,12 @@ class Faculty extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [userId];
 
   static Faculty fromMap(Map<String, dynamic> data, DocumentReference docRef) {
     Faculty faculty = Faculty(userId: data['userId']);
     faculty.firstName = data['firstName'];
-    faculty.lastName = data['lastName'] ;
+    faculty.lastName = data['lastName'];
     faculty.photoURL = data['photoURL'];
     faculty.docRef = docRef;
     faculty.title = data['title'] ?? 'NA';

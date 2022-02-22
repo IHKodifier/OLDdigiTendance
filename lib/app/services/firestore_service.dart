@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
+import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
-import 'package:digitendance/states/auth_state.dart';
 import 'package:digitendance/states/institution_state.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FirestoreApi {
   final FirebaseFirestore instance = FirebaseFirestore.instance;
@@ -14,8 +13,9 @@ class FirestoreApi {
   DocumentReference? get institutionDocRef {
     if (_institutionDocRef != null) {
       return _institutionDocRef;
-    } else
+    } else {
       throw UnimplementedError();
+    }
   }
 
   Future<UserRole> getUserRoleDoc({required String roleId}) async {
@@ -23,7 +23,7 @@ class FirestoreApi {
         .collection('userRoles')
         .where('roleId', isEqualTo: roleId)
         .get();
-    if (querySnapshot.docs.length > 0) {
+    if (querySnapshot.docs.isNotEmpty) {
       //create role Object and return
       Map<String, dynamic> data = querySnapshot.docs[0].data();
       var userRole = UserRole(data['roleName']);
@@ -81,6 +81,7 @@ class FirestoreApi {
 
       return await value.docs[0].reference.collection('sessions').get();
     });
+    return null;
   }
 
   Future<DocumentReference> addNewCourse(Course course) {
@@ -105,4 +106,10 @@ class FirestoreApi {
   //       .then((value) => value.docs[0].reference);
   //   return snapshot;
   // }
+  Future<void> addSessionToCourse(Session session, DocumentReference? docRef) {
+    return instance
+        .doc(docRef!.path)
+        .collection('sessions')
+        .add(session.toMap());
+  }
 }

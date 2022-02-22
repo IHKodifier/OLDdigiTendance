@@ -19,14 +19,14 @@ class CourseNotifier extends StateNotifier<Course> {
 
   void setSessiononCourseProvider(QuerySnapshot<Map<String, dynamic>> data) {
     state.sessions!.clear();
-    data.docs.forEach((element) {
+    for (var element in data.docs) {
       // Utilities.log(element.data().toString());
 
       state.sessions!.add(Session.fromData(element.data()));
 
       Utils.log(
           'ADDED  ${element.data()['sessionId'] + element.data()['faculty']} to selected Course\'s SESSIONS ');
-    });
+    }
   }
 
   // void removePreReq(Course courseElement) {
@@ -38,4 +38,28 @@ class CourseNotifier extends StateNotifier<Course> {
   //     state = newState;
   //   }
   // }
+}
+
+class CourseEditingNotifier extends StateNotifier<Course> {
+  final StateNotifierProviderRef<CourseEditingNotifier, Course> ref;
+  CourseEditingNotifier(state, this.ref) : super(state);
+  DocumentReference? get docRef => state.docRef;
+
+  // void setSessionOnCourseEditingProvider(
+  //     QuerySnapshot<Map<String, dynamic>> data) {
+  //   state.sessions!.clear();
+  //   for (var element in data.docs) {
+  //     // Utilities.log(element.data().toString());
+
+  //     state.sessions!.add(Session.fromData(element.data()));
+
+  //     Utils.log(
+  //         'ADDED  ${element.data()['sessionId'] + element.data()['faculty']} to selected Course\'s SESSIONS ');
+  //   }
+  // }
+
+  Course cloneFrom(Course source) => source.copyWith();
+   void setCourseEditingState(Course source) {
+    state = source;
+  }
 }

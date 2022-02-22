@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/session.dart';
-import 'package:digitendance/app/utilities.dart';
 import 'package:equatable/equatable.dart';
 
 class Course extends Equatable {
@@ -9,14 +8,14 @@ class Course extends Equatable {
   String? courseTitle;
   int? credits;
   List<Course>? preReqs = [];
-  List<Session?>? sessions = [];
+  List<Session>? sessions = [];
 
   Course({
     this.courseId,
     this.courseTitle,
     this.credits,
     this.preReqs,
-    List<Session?>? sessions,
+    List<Session>? sessions,
     this.docRef,
   });
   Course.fromData(Map<String, dynamic> data, [DocumentReference? docRef]) {
@@ -43,17 +42,17 @@ class Course extends Equatable {
      ${preReqs!.map((e) => e.courseId.toString())}
 
    SESSIONS;;
-    ${sessions!.map((e) => e!.sessionTitle)}
+    ${sessions!.map((e) => e.sessionTitle)}
     )
     ''';
   }
 
   void nullify() {
-    this.courseId = '';
-    this.courseTitle = '';
-    this.credits = null;
-    this.preReqs = [];
-    this.sessions = [];
+    courseId = '';
+    courseTitle = '';
+    credits = null;
+    preReqs = [];
+    sessions = [];
   }
 
   Map<String, dynamic> toMap() {
@@ -73,8 +72,10 @@ class Course extends Equatable {
         courseId,
         courseTitle,
         credits,
-        preReqs,
+        preReqs!,
         preReqs!.length,
+        // sessions,
+        sessions?.length,
       ];
 
   Course copyWith(
@@ -88,7 +89,7 @@ class Course extends Equatable {
         courseTitle: courseTitle ?? this.courseTitle,
         credits: credits ?? this.credits,
         preReqs: preReqs ?? this.preReqs,
-        docRef: docRef ?? this.docRef,
+        docRef: docRef ?? docRef,
         sessions: sessions ?? this.sessions);
   }
 }

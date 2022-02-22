@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/faculty.dart';
+import 'package:digitendance/app/models/session.dart';
+import 'package:digitendance/app/providers.dart';
+import 'package:digitendance/app/services/date_time_extention.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/ui/courses/edit_course/faculty_list.dart';
 import 'package:digitendance/ui/shared/faculty_avatar.dart';
@@ -6,6 +10,18 @@ import 'package:digitendance/ui/shared/spaers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
+final newSessionProvider =
+    StateNotifierProvider<SessionNotifier, Session>((ref) {
+  return SessionNotifier(Session());
+});
+
+class SessionNotifier extends StateNotifier<Session> {
+  SessionNotifier(state) : super(state);
+  void setSession(Session session) {
+    state = session;
+  }
+}
 
 class NewSessionForm extends ConsumerStatefulWidget {
   const NewSessionForm({Key? key}) : super(key: key);
@@ -23,6 +39,8 @@ class _State extends ConsumerState<NewSessionForm> {
   DateTime? sessionStartDate;
   DateTime? sessionEndDate;
   TimeOfDay? regEndTime;
+  Session? newSession;
+  SessionNotifier? newSessionNotifier;
   String? endDateString = 'Select Date & Time ';
   // String sessio
   Faculty? facultySelected;
@@ -38,6 +56,8 @@ class _State extends ConsumerState<NewSessionForm> {
   @override
   Widget build(BuildContext context) {
     final facultyList = ref.read(facultyListProvider);
+    // newSession = ref.watch(newSessionProvider);
+    newSessionNotifier = ref.read(newSessionProvider.notifier);
     return Container(
       width: MediaQuery.of(context).size.width * .65,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -273,25 +293,68 @@ class _State extends ConsumerState<NewSessionForm> {
           flex: 2,
         ),
         TextButton(
-            onPressed: () {},
+            onPressed: (() => Navigator.pop(context)),
             // icon: const Icon(Icons.cancel),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(fontSize: 24),
+            child: const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Cancel',
+                style: TextStyle(fontSize: 20),
+              ),
             )),
         const Spacer(flex: 1),
         ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: onCreateSession,
             icon: const Icon(Icons.save),
-            label: const Text(
-              'Save',
-              style: TextStyle(fontSize: 24),
+            label: const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Create Session  ',
+                style: TextStyle(fontSize: 20),
+              ),
             )),
         const Spacer(
           flex: 2,
         ),
       ],
     );
+  }
+
+  onCreateSession() {
+    newSession = Session();
+    final notifier = ref.read(newSessionProvider.notifier);
+
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      newSession!.registrationStartDate = regStartDate;
+      newSession!.registrationEndDate = Timestamp.fromDate(
+        DateTime(regEndDate!.year).join(date: regEndDate!, time: regEndTime!),
+      );
+      newSession!.faculty = Faculty(
+        userId: 'test userId',
+      );
+      // Utils.log(newSession.toString());
+      // ref
+      //     .read(firestoreProvider).doc(ref.read(currentCourseProvider).docRef!.path).collection('sessions')
+      //   //   .collection('institutions')
+      //   //   .doc(ref.read(InstitutionProvider).docRef.path)
+      //   //   .collection('courses')
+      //   //   .doc(ref.read(currentCourseProvider).docRef!.path)
+      //   //   .collection('sessions')
+      //     .add(newSession!.toMap())
+      //     .then((value) {
+      // }
+      notifier.setSession(newSession!);
+      var notif = ref.read(courseEditingProvider.notifier);
+      notif.state.sessions!.add(newSession!);
+      Utils.log(
+          'New Session Added \n printing from Provider ${ref.read(newSessionProvider).toString()}');
+      // ref.read(newSessionProvider)=
+
+      Navigator.pop(context);
+
+      // )
+    } else {}
   }
 
   buildBlankFaculty() {
@@ -348,7 +411,10 @@ class _State extends ConsumerState<NewSessionForm> {
             label: Text('session Id'),
           ),
           controller: idController,
-          onSaved: (newValue) {},
+          onSaved: (newValue) {
+            Utils.log('Saving Session Id');
+            newSession!.sessionId = newValue;
+          },
         ),
       );
 
@@ -360,7 +426,10 @@ class _State extends ConsumerState<NewSessionForm> {
             label: Text('session Title'),
           ),
           controller: titleController,
-          onSaved: (newValue) {},
+          onSaved: (newValue) {
+            Utils.log('Saving Session Title');
+            newSession!.sessionTitle = newValue;
+          },
         ),
       );
 
@@ -547,6 +616,7 @@ class _State extends ConsumerState<NewSessionForm> {
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
     );
+    // TimeOfDay
     final now = TimeOfDay.now();
     final selectectedTime = await showTimePicker(
       context: context,

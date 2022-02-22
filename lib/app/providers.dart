@@ -116,6 +116,11 @@ final currentCourseProvider =
     StateNotifierProvider<CourseNotifier, Course>((ref) {
   return CourseNotifier(Course(), ref);
 });
+///[courseEditingProvider] provides inatance of currently EDITED [Course] managedg by [CourseEditingNotifier]
+final courseEditingProvider =
+    StateNotifierProvider<CourseEditingNotifier, Course>((ref) {
+  return CourseEditingNotifier(Course(), ref);
+});
 
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
 final preReqsProvider = FutureProvider<List<Course?>>((ref) async {

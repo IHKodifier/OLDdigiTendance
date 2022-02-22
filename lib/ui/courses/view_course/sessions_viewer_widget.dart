@@ -74,11 +74,11 @@ class SessionsViewerWidget extends ConsumerWidget {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(12))),
                                 title: Text(
-                                  e!.sessionId,
+                                  e!.sessionId!,
                                   style: TextStyle(color: Theme.of(context).primaryColor),
                                 ),
                                 subtitle: Text(
-                                  e.sessionTitle,
+                                  e.sessionTitle!,
                                   style: TextStyle(color: Theme.of(context).primaryColor),
                                 ),
                               ),
