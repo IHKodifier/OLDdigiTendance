@@ -1,13 +1,16 @@
+import 'package:collection/collection.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/notifiers/course_editing_notifier.dart';
 import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/coursespage.dart';
 import 'package:digitendance/ui/courses/edit_course/new_session_form.dart';
 import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 
 class CourseEditingBodyWidget extends ConsumerStatefulWidget {
   const CourseEditingBodyWidget();
@@ -248,6 +251,32 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     editedCourse.sessions!.insert(0, ref.read(newSessionProvider));
 
     if (formNeedsSaving) {
+      // return Dialog();
+      showDialog(
+          context: context,
+          builder: (context) => Dialog(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('updating course'),
+                    Lottie.network(
+                        'https://assets3.lottiefiles.com/private_files/lf30_nrnx3s.json',
+                        height: 150,
+                        width: 150),
+                    ElevatedButton(
+                        onPressed: () {
+                          //pop twice
+                          // Navigator.pop(context);
+                          Navigator.pop(context);
+                          // final courseList = ref.read(allCoursesProvider.);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => CoursesPage()));
+                          // Navigator.pop(context);
+                        },
+                        child: const Text('Continue')),
+                  ],
+                ),
+              ));
       if (hasNewSession) {
         _addNewSessionInFirestore();
       } else {
@@ -524,6 +553,10 @@ availableCourses length =${availableCourses.length.toString()}
 
   void _updateCourseInFirestore() {
     Utils.log('Updating Course in Firestore');
+    //check if preReqs have changed since form load
+    print(
+        ' PreReqsEquality is ${const ListEquality().equals(editedCourse.preReqs, unTouchedCourse.preReqs)}');
+    // if (editedCourse.preReqs.l{
   }
 
   void _addNewSessionInFirestore() {

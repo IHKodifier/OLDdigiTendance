@@ -44,7 +44,7 @@ class Session extends Equatable {
     return {
       'sessionId': sessionId,
       'sessionTitle':sessionTitle,
-      'faculty':faculty!.userId,
+      // 'faculty':faculty!.userId,
       'registrationStartDate':registrationStartDate,
 
       'registrationEndDate': registrationEndDate,
@@ -57,9 +57,9 @@ class Session extends Equatable {
   List<Object?> get props => [
     sessionId,
     sessionTitle,
-    faculty!,
-    registrationStartDate!,
-    registrationEndDate!,
+    // faculty,
+    // registrationStartDate!,
+    // registrationEndDate!,
   ];
   @override
   String toString() {

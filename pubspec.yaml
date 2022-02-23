@@ -52,6 +52,7 @@ dependencies:
   # syncfusion_flutter_datepicker: ^19.3.57
   syncfusion_flutter_signaturepad: ^19.3.57
   syncfusion_flutter_calendar: 
+  collection: ^1.15.0
   # freezed_annotation:
   # intl:
 
