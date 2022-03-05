@@ -15,7 +15,7 @@ class FacultySearchListTile extends ConsumerWidget {
           Icons.account_circle_rounded,
           size: 65,
         ),
-        title: Text(faculty.firstName! + ' ' + faculty.lastName),
+        title: Text(faculty.firstName! + ' ' + faculty.lastName!),
         subtitle: Text(faculty.userId),
       ),
     );

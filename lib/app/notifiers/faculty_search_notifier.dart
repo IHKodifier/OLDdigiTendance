@@ -1,8 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitendance/app/models/faculty.dart';
 import 'package:digitendance/app/providers.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
-import 'package:digitendance/app/services/search_service.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/faculty_search_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,16 +44,16 @@ class FacultySearchNotifier extends StateNotifier<FacultySearchState> {
   
   ''');
 
-    await FirestoreApi()
-        .instance
-        .collection('faculty')
-        .where('firstName', isGreaterThanOrEqualTo: start)
-        .where('firstName', isLessThan: end)
-        .get()
-        .then((value) {
-      value.docs.forEach((element) {
-        state.add(Faculty.fromMap(element.data(),element.reference));
-      });
-    });
+    // await FirestoreApi()
+    //     .instance
+    //     .collection('faculty')
+    //     .where('firstName', isGreaterThanOrEqualTo: start)
+    //     .where('firstName', isLessThan: end)
+    //     .get()
+    //     .then((value) {
+    //   value.docs.forEach((element) {
+    //     state.add(Faculty.fromMap(element.data(),element.reference));
+    //   });
+    // });
   }
 }

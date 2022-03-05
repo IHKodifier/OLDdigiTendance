@@ -51,22 +51,22 @@ class SearchApi {
     return retval;
   }
 
-  Future<List<Faculty?>> searchFacultyByEmail(String query) async {
-    final FirestoreApi firestoreApi = FirestoreApi();
-    // read the query string [0] as Ascii
-    ascii = query.codeUnitAt(0);
-    try {
-      final results = await firestoreApi.instance
-          .collection('faculty')
-          .where('userId', isGreaterThanOrEqualTo: query[0].toUpperCase())
-          .where('userId', isLessThan: String.fromCharCode(ascii + 1))
-          .get();
-      retval = results.docs.map((e) => Faculty.fromMap(e.data(),e.reference)).toList();
-    } catch (e) {
-      Utils.log(e.toString());
-    }
-    return retval;
-  }
+  // Future<List<Faculty?>> searchFacultyByEmail(String query) async {
+  //   final FirestoreApi firestoreApi = FirestoreApi();
+  //   // read the query string [0] as Ascii
+  //   ascii = query.codeUnitAt(0);
+  //   try {
+  //     final results = await firestoreApi.instance
+  //         .collection('faculty')
+  //         .where('userId', isGreaterThanOrEqualTo: query[0].toUpperCase())
+  //         .where('userId', isLessThan: String.fromCharCode(ascii + 1))
+  //         .get();
+  //     retval = results.docs.map((e) => Faculty.fromMap(e.data(),e.reference)).toList();
+  //   } catch (e) {
+  //     Utils.log(e.toString());
+  //   }
+  //   return retval;
+  // }
 
   List<Faculty?> searchFacultyByNameSubString(String query) {
     String tempquery;

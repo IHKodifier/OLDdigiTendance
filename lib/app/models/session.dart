@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
+
 import 'package:digitendance/app/models/course_registration.dart';
 import 'package:digitendance/app/models/faculty.dart';
-import 'package:equatable/equatable.dart';
 
 class Session extends Equatable {
   late String? sessionId;
@@ -28,6 +29,7 @@ class Session extends Equatable {
     this.registrationStartDate,
     this.registrationEndDate,
     this.sessionStatus,
+    this.courseRegistrations
   });
   Session.fromData(Map<String, dynamic> data) {
     Timestamp timestamp = data['registrationStartDate'];
@@ -70,7 +72,31 @@ class Session extends Equatable {
 
   ''';
   }
+
+  Session copyWith({
+     String? sessionId,
+     String? sessionTitle,
+     DateTime? registrationStartDate,
+     Timestamp? registrationEndDate,
+     SessionStatus? sessionStatus,
+     Faculty? faculty,
+     List<CourseRegistration>? courseRegistrations,
+  }) {
+    return Session(
+      sessionId: sessionId ?? this.sessionId,
+      sessionTitle: sessionTitle ?? this.sessionTitle,
+      registrationStartDate: registrationStartDate ?? this.registrationStartDate,
+      registrationEndDate: registrationEndDate ?? this.registrationEndDate,
+      sessionStatus: sessionStatus ?? this.sessionStatus,
+      faculty: faculty ?? this.faculty,
+      courseRegistrations:courseRegistrations ?? this.courseRegistrations,
+    );
+      
+  }
 }
+
+
+
 
 enum RegistrationStatus {
   registrationOpened,

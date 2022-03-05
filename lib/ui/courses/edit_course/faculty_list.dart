@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/faculty.dart';
 import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/ui/courses/edit_course/new_session_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final facultyListProvider = FutureProvider<List<Faculty>>((ref) async {
-  final institutionDocRef = ref.read(InstitutionProvider).docRef;
+  DocumentReference institutionDocRef = ref.read(InstitutionProvider).docRef;
   Utils.log(institutionDocRef.path);
 
   return ref
@@ -23,14 +25,16 @@ final facultyListProvider = FutureProvider<List<Faculty>>((ref) async {
 
 class FacultyList extends ConsumerWidget {
   FacultyList({Key? key}) : super(key: key);
-  late AsyncValue<List<Faculty>> list;
+  late AsyncValue<List<Faculty>> asyncList;
   late BuildContext thisContext;
+  late WidgetRef thisRef;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     thisContext = context;
-    list = ref.watch(facultyListProvider);
-    return list.when(data: onData, error: onError, loading: onLoading);
+    thisRef = ref;
+    asyncList = ref.watch(facultyListProvider);
+    return asyncList.when(data: onData, error: onError, loading: onLoading);
   }
 
   Widget onData(List<Faculty> data) {
@@ -52,16 +56,33 @@ class FacultyList extends ConsumerWidget {
   }
 }
 
-class FacultyLisTile extends StatelessWidget {
+class FacultyLisTile extends ConsumerWidget {
   const FacultyLisTile({Key? key, required this.e}) : super(key: key);
   final Faculty e;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Navigator.pop
+    var sessionNotifier = ref.read(newSessionProvider.notifier);
+    var session = ref.watch(newSessionProvider);
+
     return Material(
       child: SimpleDialogOption(
-        child: Text(e.title + ' ' + e.firstName! + ' ' + e.lastName),
+        onPressed: () {
+          sessionNotifier.setFaculty(e);
+          Utils.log(session.faculty.toString());
+          Navigator.pop(context);
+        },
+        child: Card(
+          elevation: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ListTile(
+              title: Text(e.title! + ' ' + e.firstName! + ' ' + e.lastName!),
+              leading: CircleAvatar(child: Image.network(e.photoURL!)),
+            ),
+          ),
+        ),
         padding: const EdgeInsets.all(8),
         // subtitle: Text(e.title!),
       ),

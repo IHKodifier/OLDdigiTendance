@@ -5,10 +5,10 @@ class Faculty extends Equatable {
   // final String name;
   final String userId;
   String? firstName;
-  late String lastName, title, photoURL;
-  late final DocumentReference docRef;
+  late String? lastName, title, photoURL;
+  late DocumentReference? docRef;
 
-  Faculty({this.firstName, required this.userId});
+  Faculty({this.firstName, required this.userId, this.photoURL, this.docRef});
 
   @override
   // TODO: implement props
@@ -31,7 +31,23 @@ class Faculty extends Equatable {
     Faculty Last Name: $lastName
     User ID: $userId
     phtoURL: $photoURL    
-    docRef:${docRef.path}
+    docRef:${docRef?.path}
      ''';
+  }
+
+  Faculty copyWith({
+    String? userId,
+    String? firstName,
+    String? lastName,
+    String? title,
+    String? photoURL,
+    DocumentReference? docRef,
+  }) {
+    return Faculty(
+      userId: userId ?? this.userId,
+      firstName: firstName ?? this.firstName,
+      photoURL: photoURL ?? this.photoURL,
+      docRef: docRef ?? this.docRef,
+    );
   }
 }

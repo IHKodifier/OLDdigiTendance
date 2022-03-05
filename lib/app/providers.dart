@@ -49,6 +49,7 @@ final firestoreProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
 );
 
+
 ///
 ///                                    API PROVIDERS
 ///shall provide the[AuthApi] instance
