@@ -8,7 +8,12 @@ class Faculty extends Equatable {
   late String? lastName, title, photoURL;
   late DocumentReference? docRef;
 
-  Faculty({this.firstName, required this.userId, this.photoURL, this.docRef});
+  Faculty(
+      {this.firstName,
+      required this.userId,
+      this.photoURL,
+      this.docRef,
+      this.lastName});
 
   @override
   // TODO: implement props
@@ -48,6 +53,7 @@ class Faculty extends Equatable {
       firstName: firstName ?? this.firstName,
       photoURL: photoURL ?? this.photoURL,
       docRef: docRef ?? this.docRef,
+      lastName: lastName ?? this.lastName,
     );
   }
 }

@@ -71,19 +71,20 @@ class FacultyLisTile extends ConsumerWidget {
         onPressed: () {
           sessionNotifier.setFaculty(e);
           Utils.log(session.faculty.toString());
+          
           Navigator.pop(context);
         },
         child: Card(
-          elevation: 5,
+          elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(4.0),
             child: ListTile(
-              title: Text(e.title! + ' ' + e.firstName! + ' ' + e.lastName!),
+              title: Text(e.title! + ' ' + e.firstName! + ' '),
               leading: CircleAvatar(child: Image.network(e.photoURL!)),
             ),
           ),
         ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(4),
         // subtitle: Text(e.title!),
       ),
     );

@@ -23,7 +23,7 @@ class SessionNotifier extends StateNotifier<Session> {
 
   void setFaculty(Faculty value) {
     state.faculty = value;
-    state.faculty = state.faculty?.copyWith();
+    state = state.copyWith();
   }
 }
 
@@ -61,8 +61,8 @@ class _State extends ConsumerState<NewSessionForm> {
   Widget build(BuildContext context) {
     final facultyList = ref.read(facultyListProvider);
     newSessionNotifier = ref.read(newSessionProvider.notifier);
-    var newSession = ref.watch(newSessionProvider);
-    facultySelected = newSession.faculty;
+    newSession = ref.watch(newSessionProvider);
+    facultySelected = newSession?.faculty;
     return Container(
       width: MediaQuery.of(context).size.width * .65,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -93,13 +93,9 @@ class _State extends ConsumerState<NewSessionForm> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        newSession != null
+                        newSession?.faculty?.userId == null
                             ? FacultyPicker()
-                            : Container(
-                                color: Colors.red,
-                                height: 100,
-                                width: 100,
-                              ),
+                            : const FacultySelected()
                       ],
                     ),
                   ),
@@ -240,7 +236,7 @@ class _State extends ConsumerState<NewSessionForm> {
   }
 
   Widget buildRegDates(BuildContext context) {
-    facultySelected = ref.watch(newSessionProvider).faculty;
+    // facultySelected = ref.watch(newSessionProvider).faculty;
     return Card(
       elevation: 20,
       margin: const EdgeInsets.symmetric(horizontal: 96, vertical: 8),
@@ -646,7 +642,6 @@ class _State extends ConsumerState<NewSessionForm> {
 
 }
 
-
 class FacultyPicker extends ConsumerWidget {
   FacultyPicker({Key? key}) : super(key: key);
   late AsyncValue<List<Faculty>> asyncList;
@@ -673,13 +668,14 @@ class FacultyPicker extends ConsumerWidget {
                   radius: 41,
                 ),
               ),
-              onTap: () => _pickFaculty(context),
+              onTap: () => pickFaculty(context, ref),
             ));
   }
 
-  _pickFaculty(BuildContext context) {
+  pickFaculty(BuildContext context, WidgetRef ref) {
     asyncList.when(
       data: (List<Faculty> data) {
+        final notifier = ref.read(newSessionProvider.notifier);
         showDialog(
           context: thisContext,
           builder: (context) => SimpleDialog(
@@ -693,13 +689,58 @@ class FacultyPicker extends ConsumerWidget {
       ],
     );
   }
+}
 
-  List<Widget>? onListData(List<Faculty> data) {
-    showDialog(
-        context: thisContext,
-        builder: (context) => SimpleDialog(
-            title: const Text('select Faculty'),
-            children: data.map((e) => FacultyLisTile(e: e)).toList()));
-    return null;
+class FacultySelected extends ConsumerWidget {
+  const FacultySelected({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final faculty = ref.watch(newSessionProvider).faculty;
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            child: ClipOval(
+              child: SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Image.network(faculty!.photoURL!),
+                  )),
+              // radius: 50,
+            ),
+            onTap: () {
+              var asyncList = ref.read(facultyListProvider);
+              asyncList.when(
+                data: (List<Faculty> data) {
+                  final notifier = ref.read(newSessionProvider.notifier);
+                  showDialog(
+                    context: context,
+                    builder: (context) => SimpleDialog(
+                        title: const Text('select Faculty'),
+                        children:
+                            data.map((e) => FacultyLisTile(e: e)).toList()),
+                  );
+                },
+                error: (e, st) => [Text(e.toString())],
+                loading: () => [
+                  const CircularProgressIndicator(),
+                ],
+              );
+            },
+          ),
+          const SpacerVertical(4),
+          Text(
+            faculty.title! + faculty.firstName! + faculty.lastName!,
+            style: Theme.of(context).textTheme.headline5,
+          ),
+        ],
+      ),
+    );
   }
 }
