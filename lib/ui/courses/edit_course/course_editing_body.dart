@@ -266,7 +266,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
       ///TODO
       // return Dialog();
       var subtasks = ref.read(courseUpdateStatusProvider).microtasks;
-      for (var task in subtasks) {
+      for (var task in subtasks!) {
         task.isBusy = true;
       }
 
@@ -300,7 +300,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                     builder:
                         (BuildContext context, WidgetRef ref, Widget? child) {
                       var state = ref.watch(courseUpdateStatusProvider);
-                      var microtaskrows = state.microtasks
+                      var microtaskrows = state.microtasks!
                           .map((e) => Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -656,7 +656,7 @@ availableCourses length =${availableCourses.length.toString()}
             .read(firestoreApiProvider)
             .addSessionToCourse(session, editedCourse.docRef)
             .then((value) => notifier.markCompleted(
-                ref.read(courseUpdateStatusProvider).microtasks[1]));
+                ref.read(courseUpdateStatusProvider).microtasks![1]));
       }
     }
     // ref
@@ -672,14 +672,26 @@ final courseUpdateStatusProvider =
 });
 
 class CourseUpdateProgressNotifier extends StateNotifier<UpdateProgressState> {
-  CourseUpdateProgressNotifier([state]) : super(state ?? UpdateProgressState());
+  CourseUpdateProgressNotifier([state])
+      : super(state ??
+            UpdateProgressState(microtasks: [
+              UpdateTask(title: 'Overall Progress', isBusy: true),
+              UpdateTask(title: 'updating PreReqs', isBusy: true),
+              UpdateTask(title: 'updatingSessions', isBusy: true),
+              UpdateTask(title: 'updating Course', isBusy: true),
+            ]));
 
-  bool get overallProgress => state.microtasks[0].isBusy;
-  bool get preReqsProgress => state.microtasks[1].isBusy;
-  bool get sessionProgress => state.microtasks[2].isBusy;
-  bool get courseProgress => state.microtasks[3].isBusy;
+  bool get overallProgress => state.microtasks![0].isBusy;
+  bool get preReqsProgress => state.microtasks![1].isBusy;
+  bool get sessionProgress => state.microtasks![2].isBusy;
+  bool get courseProgress => state.microtasks![3].isBusy;
   void markCompleted(UpdateTask task) {
-    task.isBusy = true;
+    state = state.copyWith();
+    for (var item in state.microtasks!) {
+      if (item == task) {
+        item.isBusy = false;
+      }
+    }
   }
 
   void markInProgress(UpdateTask task) {
@@ -688,12 +700,24 @@ class CourseUpdateProgressNotifier extends StateNotifier<UpdateProgressState> {
 }
 
 class UpdateProgressState {
-  List<UpdateTask> microtasks = [
+  List<UpdateTask>? microtasks = [
     UpdateTask(title: 'Overall Progress', isBusy: true),
     UpdateTask(title: 'updating PreReqs', isBusy: true),
     UpdateTask(title: 'updatingSessions', isBusy: true),
     UpdateTask(title: 'updating Course', isBusy: true),
   ];
+
+  UpdateProgressState({
+    this.microtasks,
+  });
+
+  UpdateProgressState copyWith({
+    List<UpdateTask>? microtasks,
+  }) {
+    return UpdateProgressState(
+      microtasks: microtasks ?? this.microtasks,
+    );
+  }
 }
 
 class UpdateTask extends Equatable {
