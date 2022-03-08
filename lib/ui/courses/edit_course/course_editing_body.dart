@@ -8,6 +8,8 @@ import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/ui/courses/coursespage.dart';
 import 'package:digitendance/ui/courses/edit_course/new_session_form.dart';
 import 'package:digitendance/ui/courses/edit_course/session_editor_widget.dart';
+import 'package:digitendance/ui/shared/spaers.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -36,7 +38,11 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   bool get formIsModified => editedCourse != unTouchedCourse;
   bool get hasNewSession =>
       (editedCourse.sessions!.length > unTouchedCourse.sessions!.length);
-  bool get formNeedsSaving => formIsModified || hasNewSession;
+  bool get formNeedsSaving =>
+      formIsModified || hasNewSession || hasModifiedPreReqs;
+  DeepCollectionEquality equality = const DeepCollectionEquality();
+  bool get hasModifiedPreReqs =>
+      !equality.equals(editedCourse.preReqs, unTouchedCourse.preReqs);
 
   @override
   void initState() {
@@ -234,59 +240,136 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   }
 
   onSave() {
-    //validate TexFields before saving
+    ///validate TexFields before saving
     _formKey.currentState!.validate();
-    //prep [editedCourse] for saving
+
+    ///prep [editedCourse] for saving
     courseEditingNotifier.setCourseEditingState(editedCourse);
     _formKey.currentState!.save();
     editedCourse.preReqs = selectedCourses;
-
-    //add sessions to [editedCourse]
+    //add existing sessions to [editedCourse]
     editedCourse.sessions = ref
         .read(sessionListProvider)
         .value!
         .docs
         .map((e) => Session.fromData(e.data()))
         .toList();
-    editedCourse.sessions!.insert(0, ref.read(newSessionProvider));
 
+    ///if new sessions are added  add them to editedcourse
+    if (ref.read(newSessionProvider).faculty != null) {
+      editedCourse.sessions!.insert(0, ref.read(newSessionProvider));
+    }
+
+    /// [editedCourse] has been prepped for Saving
+    /// now save to firestore
     if (formNeedsSaving) {
+      ///TODO
       // return Dialog();
-      showDialog(
-          context: context,
-          builder: (context) => Dialog(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('updating course'),
-                    Lottie.network(
-                        'https://assets3.lottiefiles.com/private_files/lf30_nrnx3s.json',
-                        height: 150,
-                        width: 150),
-                    ElevatedButton(
-                        onPressed: () {
-                          //pop twice
-                          // Navigator.pop(context);
-                          Navigator.pop(context);
-                          // final courseList = ref.read(allCoursesProvider.);
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => CoursesPage()));
-                          // Navigator.pop(context);
-                        },
-                        child: const Text('Continue')),
-                  ],
-                ),
-              ));
+      var subtasks = ref.read(courseUpdateStatusProvider).microtasks;
+      for (var task in subtasks) {
+        task.isBusy = true;
+      }
+
+      /// check if the form has new sessions have been created in the edited course
+      /// if there are new sessions, first write the seessin docs to edited course
       if (hasNewSession) {
         _addNewSessionInFirestore();
       } else {
         //  no new sessions to write to firestore
       }
-      if (formIsModified) {
-        _updateCourseInFirestore();
-      } else {}
+
+      ///TODO
+      ///check if preReqs have changed. if preReqs have changed
+      ///find the newly added PreReqs, write the preReqs Doc in
+      ///the editedCourse's firebase doc
+      ///
+      ///TODO
+      ///find the preReqs that have been removed from the course in this
+      /// edit and delete those prrReqs docs from editedCourses's firestore doc
+      ///
+      // if (formIsModified) {
+      //   _updateCourseInFirestore();
+      // } else {}
+
+      showDialog(
+          context: context,
+          builder: (context) => Dialog(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Consumer(
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
+                      var state = ref.watch(courseUpdateStatusProvider);
+                      var microtaskrows = state.microtasks
+                          .map((e) => Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(e.title),
+                                    e.isBusy
+                                        ? const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                )),
+                                          )
+                                        : const Icon(Icons.done)
+                                  ]))
+                          .toList();
+                      return SizedBox(
+                        width: 600,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                'updating course',
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                            ),
+                            const SpacerVertical(4),
+                            microtaskrows[1],
+                            const SpacerVertical(4),
+                            microtaskrows[2],
+                            const SpacerVertical(4),
+                            microtaskrows[3],
+                            Lottie.network(
+                                'https://assets3.lottiefiles.com/private_files/lf30_nrnx3s.json',
+                                repeat: false,
+                                height: 150,
+                                width: 150),
+                            ElevatedButton(
+                                onPressed: () {
+                                  //pop twice
+                                  // Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  // final courseList = ref.read(allCoursesProvider.);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => const CoursesPage()));
+                                  // Navigator.pop(context);
+                                },
+                                child: const Text('Continue')),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ));
     } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form Does not need saving')));
       Utils.log('form does not need saving');
+      ref.read(courseEditingProvider.notifier).nullify();
     }
   }
 
@@ -559,8 +642,9 @@ availableCourses length =${availableCourses.length.toString()}
     // if (editedCourse.preReqs.l{
   }
 
-  void _addNewSessionInFirestore() {
+  Future<void> _addNewSessionInFirestore() async {
     Utils.log('adding sessions in Firestore');
+    var notifier = ref.read(courseUpdateStatusProvider.notifier);
 
     for (var session in editedCourse.sessions!) {
       if (unTouchedCourse.sessions!.contains(session)) {
@@ -570,11 +654,55 @@ availableCourses length =${availableCourses.length.toString()}
         //write this new session to firestore
         ref
             .read(firestoreApiProvider)
-            .addSessionToCourse(session, editedCourse.docRef);
+            .addSessionToCourse(session, editedCourse.docRef)
+            .then((value) => notifier.markCompleted(
+                ref.read(courseUpdateStatusProvider).microtasks[1]));
       }
     }
+    // ref
+    //     .read(courseUpdateStatusProvider.notifier)
+    //     .markCompleted(ref.read(courseUpdateStatusProvider).microtasks[1]);
+  }
+}
+
+final courseUpdateStatusProvider =
+    StateNotifierProvider<CourseUpdateProgressNotifier, UpdateProgressState>(
+        (ref) {
+  return CourseUpdateProgressNotifier();
+});
+
+class CourseUpdateProgressNotifier extends StateNotifier<UpdateProgressState> {
+  CourseUpdateProgressNotifier([state]) : super(state ?? UpdateProgressState());
+
+  bool get overallProgress => state.microtasks[0].isBusy;
+  bool get preReqsProgress => state.microtasks[1].isBusy;
+  bool get sessionProgress => state.microtasks[2].isBusy;
+  bool get courseProgress => state.microtasks[3].isBusy;
+  void markCompleted(UpdateTask task) {
+    task.isBusy = true;
   }
 
+  void markInProgress(UpdateTask task) {
+    task.isBusy = false;
+  }
+}
 
+class UpdateProgressState {
+  List<UpdateTask> microtasks = [
+    UpdateTask(title: 'Overall Progress', isBusy: true),
+    UpdateTask(title: 'updating PreReqs', isBusy: true),
+    UpdateTask(title: 'updatingSessions', isBusy: true),
+    UpdateTask(title: 'updating Course', isBusy: true),
+  ];
+}
 
+class UpdateTask extends Equatable {
+  final String title;
+  bool isBusy;
+
+  UpdateTask({required this.title, this.isBusy = true});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [title];
 }

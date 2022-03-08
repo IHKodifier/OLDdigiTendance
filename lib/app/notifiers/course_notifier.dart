@@ -59,7 +59,17 @@ class CourseEditingNotifier extends StateNotifier<Course> {
   // }
 
   Course cloneFrom(Course source) => source.copyWith();
-   void setCourseEditingState(Course source) {
+  void setCourseEditingState(Course source) {
     state = source;
   }
+
+  void nullify() {
+    state = state.copyWith();
+    state.courseId = '';
+    state.courseTitle = '';
+    state.credits = 0;
+    state.docRef = null;
+    state.preReqs = [];
+    state.sessions = [];
+      }
 }

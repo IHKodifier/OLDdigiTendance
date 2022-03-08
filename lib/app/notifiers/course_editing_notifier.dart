@@ -5,16 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PreReqsEditingNotifier extends StateNotifier<PreReqsEditingState> {
-   var ref;
-  
+  var ref;
+
   PreReqsEditingNotifier(this.ref, state)
       : super(PreReqsEditingState(
-        previousPreReqsState: state,
+          previousPreReqsState: state,
         ));
 
   List<Course?>? get newPreqsState => state.newPreReqsState;
-  List<Course?>? get actualPreReqsState => ref.read(currentCourseProvider).preReqs;
-  bool get isModified => newPreqsState!=actualPreReqsState;
+  List<Course?>? get actualPreReqsState =>
+      ref.read(currentCourseProvider).preReqs;
+  bool get isModified => newPreqsState != actualPreReqsState;
   bool get isNotModified => !isModified;
 
   // void addSelectedCourse(Course course) {
@@ -33,4 +34,4 @@ class PreReqsEditingNotifier extends StateNotifier<PreReqsEditingState> {
     newPreqsState!.remove(course);
   }
 
-}
+  }

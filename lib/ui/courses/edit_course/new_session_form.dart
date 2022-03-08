@@ -710,7 +710,7 @@ class FacultySelected extends ConsumerWidget {
                   width: 100,
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Image.network(faculty!.photoURL!),
+                    child: Image.network(faculty!.photoURL!, fit: BoxFit.fill),
                   )),
               // radius: 50,
             ),

@@ -8,7 +8,7 @@ class EditCourse extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(currentCourseProvider.notifier);
-    final state = ref.read(currentCourseProvider);
+    final state = ref.watch(currentCourseProvider);
     // state.docRef = FirestoreApi().getCourseDocRef(ref.read(InstitutionProvider).docRef,state.courseId!) as DocumentReference<Object?>;
 
     return Scaffold(
@@ -16,6 +16,6 @@ class EditCourse extends ConsumerWidget {
           title: Text('Editing  ...${state.courseTitle}...'),
           centerTitle: true,
         ),
-        body: CourseEditingBodyWidget());
+        body: const CourseEditingBodyWidget());
   }
 }
