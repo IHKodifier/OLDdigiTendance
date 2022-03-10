@@ -25,6 +25,11 @@ class SessionNotifier extends StateNotifier<Session> {
     state.faculty = value;
     state = state.copyWith();
   }
+
+ 
+  void nullify() {
+    // dispose();
+  }
 }
 
 class NewSessionForm extends ConsumerStatefulWidget {
@@ -324,9 +329,7 @@ class _State extends ConsumerState<NewSessionForm> {
       newSession!.registrationEndDate = Timestamp.fromDate(
         DateTime(regEndDate!.year).join(date: regEndDate!, time: regEndTime!),
       );
-      newSession!.faculty = Faculty(
-        userId: 'test userId',
-      );
+      newSession!.faculty = ref.read(newSessionProvider).faculty;
       // Utils.log(newSession.toString());
       // ref
       //     .read(firestoreProvider).doc(ref.read(currentCourseProvider).docRef!.path).collection('sessions')

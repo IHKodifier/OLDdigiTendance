@@ -240,6 +240,8 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
   }
 
   onSave() {
+    final updateNotifier = ref.read(courseUpdateStatusProvider.notifier);
+
     ///validate TexFields before saving
     _formKey.currentState!.validate();
 
@@ -263,8 +265,7 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
     /// [editedCourse] has been prepped for Saving
     /// now save to firestore
     if (formNeedsSaving) {
-      ///TODO
-      // return Dialog();
+      ///prep the [courseUpdateStatusProvider]
       var subtasks = ref.read(courseUpdateStatusProvider).microtasks;
       for (var task in subtasks!) {
         task.isBusy = true;
@@ -280,16 +281,34 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
 
       ///TODO
       ///check if preReqs have changed. if preReqs have changed
-      ///find the newly added PreReqs, write the preReqs Doc in
-      ///the editedCourse's firebase doc
-      ///
-      ///TODO
-      ///find the preReqs that have been removed from the course in this
-      /// edit and delete those prrReqs docs from editedCourses's firestore doc
-      ///
-      // if (formIsModified) {
-      //   _updateCourseInFirestore();
-      // } else {}
+      if (hasModifiedPreReqs) {
+        ///find the newly added PreReqs, write the preReqs Doc in
+        ///the editedCourse's firebase doc
+        ///
+        ///
+        ///
+        ///TODO
+        ///find the preReqs that have been removed from the course in this
+        /// edit and delete those prrReqs docs from editedCourses's firestore doc
+        ///
+
+        ///upDate [courseUpdateStatus]
+      } else {
+        ///did not have modified PreReqs, update the courseUpdateStatus
+        updateNotifier.markCompleted(updateNotifier.state.microtasks![0]);
+      }
+
+      /// make sure the [CourseUpdateStatusProvider] is updated
+
+      if (formIsModified) {
+        ///update the course Fields in Firebase Course Doc
+        ///
+        _updateCourseInFirestore();
+      } else {
+        // updateNotifier.markCompleted(updateNotifier.state.microtasks![2]);
+
+      }
+      updateNotifier.markCompleted(updateNotifier.state.microtasks![2]);
 
       showDialog(
           context: context,
@@ -335,16 +354,21 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
                               ),
                             ),
                             const SpacerVertical(4),
+                            microtaskrows[0],
+                            const SpacerVertical(4),
                             microtaskrows[1],
                             const SpacerVertical(4),
                             microtaskrows[2],
-                            const SpacerVertical(4),
-                            microtaskrows[3],
-                            Lottie.network(
-                                'https://assets3.lottiefiles.com/private_files/lf30_nrnx3s.json',
-                                repeat: false,
-                                height: 150,
-                                width: 150),
+                            ref
+                                    .read(courseUpdateStatusProvider.notifier)
+                                    .overallProgress
+                                ? Container()
+                                : Lottie.network(
+                                    'https://assets3.lottiefiles.com/private_files/lf30_nrnx3s.json',
+                                    repeat: false,
+                                    animate: true,
+                                    height: 180,
+                                    width: 180),
                             ElevatedButton(
                                 onPressed: () {
                                   //pop twice
@@ -645,6 +669,7 @@ availableCourses length =${availableCourses.length.toString()}
   Future<void> _addNewSessionInFirestore() async {
     Utils.log('adding sessions in Firestore');
     var notifier = ref.read(courseUpdateStatusProvider.notifier);
+    var progressState = ref.watch(courseUpdateStatusProvider);
 
     for (var session in editedCourse.sessions!) {
       if (unTouchedCourse.sessions!.contains(session)) {
@@ -655,13 +680,13 @@ availableCourses length =${availableCourses.length.toString()}
         ref
             .read(firestoreApiProvider)
             .addSessionToCourse(session, editedCourse.docRef)
-            .then((value) => notifier.markCompleted(
-                ref.read(courseUpdateStatusProvider).microtasks![1]));
+            .then((value) {
+          notifier.markCompleted(
+              ref.read(courseUpdateStatusProvider).microtasks![1]);
+          ref.refresh(newSessionProvider);
+        });
       }
     }
-    // ref
-    //     .read(courseUpdateStatusProvider.notifier)
-    //     .markCompleted(ref.read(courseUpdateStatusProvider).microtasks[1]);
   }
 }
 
@@ -675,16 +700,17 @@ class CourseUpdateProgressNotifier extends StateNotifier<UpdateProgressState> {
   CourseUpdateProgressNotifier([state])
       : super(state ??
             UpdateProgressState(microtasks: [
-              UpdateTask(title: 'Overall Progress', isBusy: true),
               UpdateTask(title: 'updating PreReqs', isBusy: true),
               UpdateTask(title: 'updatingSessions', isBusy: true),
               UpdateTask(title: 'updating Course', isBusy: true),
             ]));
 
-  bool get overallProgress => state.microtasks![0].isBusy;
+  bool get overallProgress =>
+      state.microtasks![0].isBusy ||
+      state.microtasks![1].isBusy ||
+      state.microtasks![2].isBusy;
   bool get preReqsProgress => state.microtasks![1].isBusy;
   bool get sessionProgress => state.microtasks![2].isBusy;
-  bool get courseProgress => state.microtasks![3].isBusy;
   void markCompleted(UpdateTask task) {
     state = state.copyWith();
     for (var item in state.microtasks!) {
@@ -701,7 +727,6 @@ class CourseUpdateProgressNotifier extends StateNotifier<UpdateProgressState> {
 
 class UpdateProgressState {
   List<UpdateTask>? microtasks = [
-    UpdateTask(title: 'Overall Progress', isBusy: true),
     UpdateTask(title: 'updating PreReqs', isBusy: true),
     UpdateTask(title: 'updatingSessions', isBusy: true),
     UpdateTask(title: 'updating Course', isBusy: true),

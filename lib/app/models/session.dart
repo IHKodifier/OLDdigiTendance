@@ -46,7 +46,7 @@ class Session extends Equatable {
     return {
       'sessionId': sessionId,
       'sessionTitle':sessionTitle,
-      // 'faculty':faculty!.userId,
+      'faculty':faculty!.userId,
       'registrationStartDate':registrationStartDate,
 
       'registrationEndDate': registrationEndDate,
