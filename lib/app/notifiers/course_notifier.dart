@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/session.dart';
+import 'package:digitendance/app/providers.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CourseNotifier extends StateNotifier<Course> {
   final StateNotifierProviderRef<CourseNotifier, Course> ref;
   CourseNotifier(state, this.ref) : super(state);
-  DocumentReference? get docRef => state.docRef;
+  DocumentReference? get docRef => state.courseDocRef;
 
   // void setPreReqsonCourse(QuerySnapshot<Map<String, dynamic>> data) {
   //   data.docs.forEach((element) {
@@ -17,15 +18,18 @@ class CourseNotifier extends StateNotifier<Course> {
   //   });
   // }
 
-  void setSessiononCourseProvider(QuerySnapshot<Map<String, dynamic>> data) {
+  void setSessiononCourseProvider(
+      QuerySnapshot<Map<String, dynamic>> data, String courseId) {
     state.sessions!.clear();
+    // var courseId = ref.read(currentCourseProvider).courseId!;
     for (var element in data.docs) {
       // Utilities.log(element.data().toString());
 
-      state.sessions!.add(Session.fromData(element.data()));
+      state.sessions!
+          .add(Session.fromDataAndCourseId(element.data(), courseId));
 
       Utils.log(
-          'ADDED  ${element.data()['sessionId'] + element.data()['faculty']} to selected Course\'s SESSIONS ');
+          'ADDED  ${element.data()['sessionId'] + element.data()['facultyId']} to selected Course\'s SESSIONS ');
     }
   }
 
@@ -43,7 +47,7 @@ class CourseNotifier extends StateNotifier<Course> {
 class CourseEditingNotifier extends StateNotifier<Course> {
   final StateNotifierProviderRef<CourseEditingNotifier, Course> ref;
   CourseEditingNotifier(state, this.ref) : super(state);
-  DocumentReference? get docRef => state.docRef;
+  DocumentReference? get docRef => state.courseDocRef;
 
   // void setSessionOnCourseEditingProvider(
   //     QuerySnapshot<Map<String, dynamic>> data) {
@@ -68,8 +72,8 @@ class CourseEditingNotifier extends StateNotifier<Course> {
     state.courseId = '';
     state.courseTitle = '';
     state.credits = 0;
-    state.docRef = null;
+    state.courseDocRef = null;
     state.preReqs = [];
     state.sessions = [];
-      }
+  }
 }

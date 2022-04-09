@@ -1,7 +1,7 @@
 import 'package:digitendance/app/models/app_user.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
+import 'package:digitendance/app/services/firestore_api.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

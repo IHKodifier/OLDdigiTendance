@@ -1,10 +1,15 @@
+// ignore_for_file: sdk_version_constructor_tearoffs
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/course.dart';
 import 'package:digitendance/app/models/session.dart';
 import 'package:digitendance/app/models/user_role.dart';
 import 'package:digitendance/app/providers.dart';
-import 'package:digitendance/app/utilities.dart';
+import 'package:digitendance/app/utilities.dart' as utils;
 import 'package:digitendance/states/institution_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../utilities.dart';
 
 class FirestoreApi {
   final FirebaseFirestore instance = FirebaseFirestore.instance;
@@ -29,7 +34,7 @@ class FirestoreApi {
       var userRole = UserRole(data['roleName']);
       return userRole;
     } else {
-      Utils.log('roleId: $roleId not found in firesore');
+      utils.Utils.log('roleId: $roleId not found in firesore');
       return null as UserRole;
     }
   }
@@ -41,8 +46,8 @@ class FirestoreApi {
         .where('userId', isEqualTo: userId)
         .get();
 
-    Utils.log(
-        ' user doc\'s parent\'s path equals  ${userQuerySnapshot.docs[0].reference.parent.parent.toString()}');
+    utils.Utils.log(
+        ' user\'s institutionPath : ${userQuerySnapshot.docs[0].reference.parent.parent.toString()}');
     _institutionDocRef = userQuerySnapshot.docs[0].reference.parent.parent!;
     var data = await instance
         .collection('institutions')
@@ -50,12 +55,12 @@ class FirestoreApi {
         .get();
     Institution institution =
         Institution.fromData(data.data(), _institutionDocRef);
-    final notifier = refBase.read(InstitutionProvider.notifier);
+    final notifier = refBase.read(institutionProvider.notifier);
     // notifier.state.docRef = _institutionDocRef;
     await notifier.setInstitution(institution);
 
-    Utils.log(
-        'Institution set to ${institution.title} with firestore Document reference equal to ${notifier.docRef.toString()}');
+    utils.Utils.log(
+        'Institution set to ${institution.title} with firestore Document reference equal to ${notifier.courseDocRef.toString()}');
 
     return userQuerySnapshot;
 
@@ -76,7 +81,7 @@ class FirestoreApi {
         .where('courseId', isEqualTo: courseId)
         .get()
         .then((value) async {
-      Utils.log(
+      utils.Utils.log(
           ' sessions query length on $courseId equals ${value.docs.length.toString()}');
 
       return await value.docs[0].reference.collection('sessions').get();
@@ -112,4 +117,50 @@ class FirestoreApi {
         .collection('sessions')
         .add(session.toMap());
   }
+
+  getCoursesBySession(List<Session> sessions, ProviderRef ref) async {
+    var db = ref.read(firestoreProvider);
+    var institutionDocRef = ref.read(institutionProvider).InstitutionDocRef;
+    //   Course course = db
+    //       .collection('institutions')
+    //       .doc(institutionDocRef.path)
+    //       .collection(collectionPath);
+  }
+
+  ///get stream of [Session]from firestore for current faculty
+
+  Future<AsyncValue<List<Session>>> getSessionsForFaculty(
+    FutureProviderRef<AsyncValue<List<Session>>> ref,
+  ) async {
+    final institutionPath =
+        ref.read(institutionProvider).InstitutionDocRef.path;
+    Utils.log(' Instution psth  $institutionPath');
+    final facultyId = ref.read(currentAppUserProvider).value?.email;
+    List<Session> sessions = [];
+    QuerySnapshot<Map<String, dynamic>> snapshot = await ref
+        .read(firestoreProvider)
+        .collectionGroup('sessions')
+        .where('facultyId', isEqualTo: facultyId)
+        .get();
+    for (var doc in snapshot.docs) {
+      Session session =
+          Session.fromDataAndSessionDocRef(doc.data(), doc.reference);
+      utils.Utils.log(
+          'session read: reference =${session.parentCourseDocRef.toString()}');
+      sessions.add(session);
+    }
+    return AsyncValue<List<Session>>.data(sessions);
+  }
+
+  ///TODO implement StreamTransformers where needed.
+  // Stream<List<Session>> getfacultySessionStream(
+  //     DocumentReference institutionDocRef, String facultyId) {
+  //   return instance
+  //       .collectionGroup('sessions')
+  //       .where('facultyId', isEqualTo: facultyId)
+  //       .snapshots()
+  //       .transform(utils.Utils.streamTransformer(Session.fromJson));
+
+  // }
+
 }

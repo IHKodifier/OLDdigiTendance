@@ -254,7 +254,8 @@ class _CourseEditingBodyState extends ConsumerState<CourseEditingBodyWidget> {
         .read(sessionListProvider)
         .value!
         .docs
-        .map((e) => Session.fromData(e.data()))
+        .map((e) => Session.fromDataAndCourseId(
+            e.data(), ref.read(currentCourseProvider).courseId!))
         .toList();
 
     ///if new sessions are added  add them to editedcourse
@@ -679,7 +680,7 @@ availableCourses length =${availableCourses.length.toString()}
         //write this new session to firestore
         ref
             .read(firestoreApiProvider)
-            .addSessionToCourse(session, editedCourse.docRef)
+            .addSessionToCourse(session, editedCourse.courseDocRef)
             .then((value) {
           notifier.markCompleted(
               ref.read(courseUpdateStatusProvider).microtasks![1]);

@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 
 final newSessionProvider =
     StateNotifierProvider<SessionNotifier, Session>((ref) {
-  return SessionNotifier(Session());
+  return SessionNotifier(Session(parentCourseId: ref.read(currentCourseProvider).courseId!));
 });
 
 class SessionNotifier extends StateNotifier<Session> {
@@ -26,7 +26,6 @@ class SessionNotifier extends StateNotifier<Session> {
     state = state.copyWith();
   }
 
- 
   void nullify() {
     // dispose();
   }
@@ -320,11 +319,12 @@ class _State extends ConsumerState<NewSessionForm> {
   }
 
   onCreateSession() {
-    newSession = Session();
+    newSession = Session(parentCourseId: ref.read(currentCourseProvider).courseId!);
     final notifier = ref.read(newSessionProvider.notifier);
 
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      newSession?.parentCourseId = ref.read(currentCourseProvider).courseId!;
       newSession!.registrationStartDate = regStartDate;
       newSession!.registrationEndDate = Timestamp.fromDate(
         DateTime(regEndDate!.year).join(date: regEndDate!, time: regEndTime!),

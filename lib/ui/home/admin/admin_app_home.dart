@@ -50,7 +50,7 @@ class _AdminBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final instutution = ref.watch(InstitutionProvider);
+    final instutution = ref.watch(institutionProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,31 +69,31 @@ class _AdminBody extends ConsumerWidget {
             alignment: WrapAlignment.center,
             // ignore: prefer_const_literals_to_create_immutables
             children: [
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 iconData: Icons.auto_stories,
                 title: 'Courses',
               ),
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 // assetName: 'student.jpg',
                 iconData: Icons.people,
                 title: 'Students',
               ),
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 // assetName: 'faculty.png',
                 iconData: Icons.school,
                 title: 'Faculty',
               ),
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 // assetName: 'about.png',
                 iconData: Icons.info,
                 title: 'About Digitendance',
               ),
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 // assetName: 'settings.png',
                 iconData: Icons.settings,
                 title: 'Settings',
               ),
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 // assetName: 'reports.jpg',
                 iconData: Icons.bar_chart_sharp,
                 title: 'Reports',
@@ -136,7 +136,7 @@ class _TeacherBody extends StatelessWidget {
             alignment: WrapAlignment.center,
             // ignore: prefer_const_literals_to_create_immutables
             children: [
-              const _AdminMenuCard(
+              const HomeMenuCard(
                 iconData: Icons.auto_stories,
                 title: 'Courses',
               ),
@@ -181,11 +181,11 @@ class _TeacherBody extends StatelessWidget {
   }
 }
 
-class _AdminMenuCard extends StatelessWidget {
+class HomeMenuCard extends StatelessWidget {
   // final String assetName;
   final IconData iconData;
   final String title;
-  const _AdminMenuCard({Key? key, required this.iconData, required this.title})
+  const HomeMenuCard({Key? key, required this.iconData, required this.title})
       : super(key: key);
 
   @override

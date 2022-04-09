@@ -219,6 +219,7 @@ class _NewCourseBodyState extends ConsumerState<NewCourseBody> {
     course.sessions = [
       Session(
           sessionId: 'sessionId99',
+          parentCourseId: ref.read(currentCourseProvider).courseId!,
           sessionTitle: 'SessionTtile 99',
           faculty: Faculty(userId: 'faculty 99@qw.com'))
     ];

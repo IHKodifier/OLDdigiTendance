@@ -3,7 +3,8 @@ import 'package:digitendance/app/models/session.dart';
 import 'package:equatable/equatable.dart';
 
 class Course extends Equatable {
-  late DocumentReference? docRef;
+  late DocumentReference? courseDocRef;
+  late DocumentReference<Map<String, dynamic>> parentInstitutionDocRef;
   String? courseId;
   String? courseTitle;
   int? credits;
@@ -16,13 +17,14 @@ class Course extends Equatable {
     this.credits,
     this.preReqs,
     List<Session>? sessions,
-    this.docRef,
+    this.courseDocRef,
   });
   Course.fromData(Map<String, dynamic> data, [DocumentReference? docRef]) {
     courseId = data['courseId'];
     courseTitle = data['courseTitle'];
     // preReqs = data['preReqs'];
-    this.docRef = docRef;
+    courseDocRef = docRef;
+    parentInstitutionDocRef = courseDocRef!.parent.parent!;
     preReqs = [];
     credits = data['credits'];
     // var x = data['preReqs'];
@@ -34,9 +36,10 @@ class Course extends Equatable {
   String toString() {
     return '''courseId: $courseId, courseTitle: $courseTitle Credits: ${credits.toString()}, number of preReqs: ${preReqs!.length}
     Course DocumentReference = 
-    Doc Id = ${docRef?.id}
-    Doc parent  = ${docRef?.parent.toString()}
-    Doc path =${docRef?.path}
+    Doc Id = ${courseDocRef?.id}
+    Doc parent  = ${courseDocRef?.parent.toString()}
+    Course Doc path =${courseDocRef?.path}
+    Parent Institution  Doc path =${parentInstitutionDocRef.path}
     number of Sessions: ${sessions!.length}
     PREREQS
      ${preReqs!.map((e) => e.courseId.toString())}
@@ -89,7 +92,7 @@ class Course extends Equatable {
         courseTitle: courseTitle ?? this.courseTitle,
         credits: credits ?? this.credits,
         preReqs: preReqs ?? this.preReqs,
-        docRef: docRef ?? docRef,
+        courseDocRef: courseDocRef ?? courseDocRef,
         sessions: sessions ?? this.sessions);
   }
 }

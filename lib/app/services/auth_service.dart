@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_const, constant_identifier_names
 
 import 'package:digitendance/app/models/app_user.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
+import 'package:digitendance/app/services/firestore_api.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

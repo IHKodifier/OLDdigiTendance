@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final facultyListProvider = FutureProvider<List<Faculty>>((ref) async {
-  DocumentReference institutionDocRef = ref.read(InstitutionProvider).docRef;
+  DocumentReference institutionDocRef =
+      ref.read(institutionProvider).InstitutionDocRef;
   Utils.log(institutionDocRef.path);
 
   return ref
@@ -71,7 +72,7 @@ class FacultyLisTile extends ConsumerWidget {
         onPressed: () {
           sessionNotifier.setFaculty(e);
           Utils.log(session.faculty.toString());
-          
+
           Navigator.pop(context);
         },
         child: Card(

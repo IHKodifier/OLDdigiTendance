@@ -14,8 +14,8 @@ import 'package:digitendance/app/notifiers/course_notifier.dart';
 import 'package:digitendance/app/notifiers/faculty_search_notifier.dart';
 import 'package:digitendance/app/notifiers/institution_notifier.dart';
 import 'package:digitendance/app/services/auth_service.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
+import 'package:digitendance/app/services/firestore_api.dart';
+import 'package:digitendance/app/services/firestore_api.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/faculty_search_state.dart';
 import 'package:digitendance/states/institution_state.dart';
@@ -49,7 +49,6 @@ final firestoreProvider = Provider<FirebaseFirestore>(
   (ref) => FirebaseFirestore.instance,
 );
 
-
 ///
 ///                                    API PROVIDERS
 ///shall provide the[AuthApi] instance
@@ -74,7 +73,7 @@ final authStateChangesStreamProvider = StreamProvider<User?>(
 
 final coursesStreamProvider =
     StreamProvider<QuerySnapshot<Map<String, dynamic>>>((ref) {
-  var instituionId = ref.read(InstitutionProvider).docRef;
+  var instituionId = ref.read(institutionProvider).InstitutionDocRef;
 
   return ref
       .watch(firestoreProvider)
@@ -117,6 +116,7 @@ final currentCourseProvider =
     StateNotifierProvider<CourseNotifier, Course>((ref) {
   return CourseNotifier(Course(), ref);
 });
+
 ///[courseEditingProvider] provides inatance of currently EDITED [Course] managedg by [CourseEditingNotifier]
 final courseEditingProvider =
     StateNotifierProvider<CourseEditingNotifier, Course>((ref) {
@@ -125,7 +125,7 @@ final courseEditingProvider =
 
 /// [preReqsProvider] provides a stream of [Course] located in the [courses/preReqs collection] of firestore
 final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
-  var institutiondocRef = ref.read(InstitutionProvider).docRef;
+  var institutiondocRef = ref.read(institutionProvider).InstitutionDocRef;
   final course = ref.read(currentCourseProvider);
   return ref
       .read(firestoreProvider)
@@ -144,8 +144,7 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
             }).toList();
 
             return value.docs
-                .map(
-                    (e) => Course.fromData(e.data(), e.reference))
+                .map((e) => Course.fromData(e.data(), e.reference))
                 .toList();
 
             //
@@ -156,7 +155,7 @@ final preReqsProvider = FutureProvider<List<Course?>>((ref) async {
 ///
 final sessionListProvider =
     FutureProvider<QuerySnapshot<Map<String, dynamic>>>((ref) async {
-  final docRef = ref.read(InstitutionProvider).docRef;
+  final docRef = ref.read(institutionProvider).InstitutionDocRef;
   final Course course = ref.watch(currentCourseProvider);
   return ref
       .watch(firestoreProvider)
@@ -167,13 +166,14 @@ final sessionListProvider =
       .then((value) =>
           value.docs[0].reference.collection('sessions').get().then((value) {
             final notifier = ref.read(currentCourseProvider.notifier);
-            notifier.setSessiononCourseProvider(value);
+            final courseId = ref.read(currentCourseProvider).courseId;
+            notifier.setSessiononCourseProvider(value, courseId!);
             return value;
           }));
 });
 
-///[InstitutionProvider] will provide the state of [Instituion] and will be managed by [InstitutionNotifier]
-final InstitutionProvider =
+///[institutionProvider] will provide the state of [Instituion] and will be managed by [InstitutionNotifier]
+final institutionProvider =
     StateNotifierProvider<InstitutionNotifier, Institution>((ref) {
   return InstitutionNotifier(Institution(), ref);
 });
@@ -186,7 +186,7 @@ final facultySearchProvider =
 });
 
 final allCoursesProvider = FutureProvider<List<Course?>?>((ref) async {
-  var docRef = ref.read(InstitutionProvider).docRef;
+  var docRef = ref.read(institutionProvider).InstitutionDocRef;
   // ref.listen(currentCourseProvider, (course ) {});
   return FirebaseFirestore.instance
       .doc(docRef.path)

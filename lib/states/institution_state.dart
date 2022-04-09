@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Institution extends Equatable {
-  late DocumentReference docRef;
+  late DocumentReference InstitutionDocRef;
   late String? title;
   late String? id;
 
@@ -16,7 +16,7 @@ class Institution extends Equatable {
     Institution institution = Institution();
     institution.title = data!['title'];
     institution.id = data['id'];
-    institution.docRef = docRef;
+    institution.InstitutionDocRef = docRef;
     return institution;
   }
 
@@ -26,9 +26,9 @@ class Institution extends Equatable {
     Institution title =$title
     Institution Id = $id
     DocumentReference = 
-    Doc Id = ${docRef.id}
-    Doc parent  = ${docRef.parent.toString()}
-    Doc path =${docRef.path}
+    Doc Id = ${InstitutionDocRef.id}
+    Doc parent  = ${InstitutionDocRef.parent.toString()}
+    Doc path =${InstitutionDocRef.path}
 
     ''';
   }

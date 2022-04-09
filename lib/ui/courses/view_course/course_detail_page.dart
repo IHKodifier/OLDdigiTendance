@@ -20,7 +20,7 @@ class CourseDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     localContext = context;
     course = ref.watch(currentCourseProvider);
-    final institution = ref.read(InstitutionProvider);
+    final institution = ref.read(institutionProvider);
     final notifier = ref.read(currentCourseProvider.notifier);
     String appBarTitle = course.courseId ?? 'New Course';
     // course.courseId = 'new course';

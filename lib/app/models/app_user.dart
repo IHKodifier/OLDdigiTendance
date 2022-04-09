@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_this
 
 import 'package:digitendance/app/models/user_role.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
+import 'package:digitendance/app/services/firestore_api.dart';
 import 'package:digitendance/app/utilities.dart';
 import 'package:digitendance/states/auth_state.dart';
 import 'package:equatable/equatable.dart';

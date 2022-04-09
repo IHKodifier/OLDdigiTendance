@@ -6,7 +6,8 @@ class InstitutionNotifier extends StateNotifier<Institution> {
   final StateNotifierProviderRef<InstitutionNotifier, Institution> ref;
   // late final DocRef;
   InstitutionNotifier(state, this.ref) : super(state);
-  DocumentReference get docRef => state.docRef;
+  DocumentReference get courseDocRef => state.InstitutionDocRef;
+  // DocumentReference get docRef => state.InstitutionDocRef;
   setInstitution(value) {
     state = value;
   }

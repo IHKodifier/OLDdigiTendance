@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitendance/app/models/faculty.dart';
-import 'package:digitendance/app/services/firestore_service.dart';
+import 'package:digitendance/app/services/firestore_api.dart';
 import 'package:digitendance/app/utilities.dart';
 
 class SearchApi {
